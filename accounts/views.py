@@ -33,3 +33,6 @@ def signin_page_view(request):
 
 def signup_page_view(request):
    return render(request, 'accounts/signup_page.html')       
+
+def profile_page_view(request):
+   return render(request, 'accounts/profile_page.html')

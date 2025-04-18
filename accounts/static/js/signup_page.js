@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Form submission
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Validate all fields
@@ -161,9 +161,31 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (isFirstNameValid && isLastNameValid && isEmailValid && 
             isPasswordValid && isConfirmPasswordValid && isTermsAgreed) {
-            // Form is valid, proceed with submission
-            alert('Account created successfully!');
-            // Here you would typically send the form data to the server
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+
+                try {
+                    const res = await fetch('/accounts/api/register/', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email, password, role })
+                    });
+            
+                    const data = await res.json();
+            
+                    if (res.ok) {
+                      document.getElementById('message').style.color = 'green';
+                      document.getElementById('message').innerText = "Registration successful!";
+                      window.location.href = '/account/dashboard/';
+                    } else {
+                      const errMsg = Object.values(data).join(', ') || 'Registration failed';
+                      document.getElementById('message').innerText = errMsg;
+                    }
+                  } catch (error) {
+                    document.getElementById('message').innerText = "An error occurred. Please try again.";
+                  }
         }
     });
 });
