@@ -4,7 +4,7 @@
 {% block title %}SignUp{% endblock title %}
 
 {% block styles %}
-    {% comment %} <link rel="stylesheet" href="{% static 'css/signup_page.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/signup_page.css' %}">
 {% endblock styles %}
 
 {% block content %}
@@ -16,6 +16,129 @@
         
         {% include "accounts/includes/signup_page_form.html" %}
     </div>
+    
+    <script src="{% static 'js/signup_page.js' %}"></script>
 {% endblock content%}
 
 
+
+
+
+
+{% comment %} 
+<h2>Sign Up</h2>
+<form id="signupForm">
+  <input name="username" placeholder="Username" required><br>
+  <input type="email" name="email" placeholder="Email" required><br>
+  <input type="password" name="password" placeholder="Password" required><br>
+  <input type="password" name="password2" placeholder="Confirm Password" required><br>
+  <button type="submit">Register</button>
+</form>
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+  const data = {
+    username: form.username.value,
+    email: form.email.value,
+    password: form.password.value,
+    password2: form.password2.value
+  };
+
+  const response = await fetch('/api/register/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+
+  if (response.ok) {
+    localStorage.setItem('access', result.access);
+    localStorage.setItem('refresh', result.refresh);
+    window.location.href = '/profile/';
+  } else {
+    alert("Signup failed: " + JSON.stringify(result));
+  }
+});
+</script>
+
+
+
+
+
+
+<h2>Login</h2>
+<form id="loginForm">
+  <input type="email" name="email" placeholder="Email" required><br>
+  <input type="password" name="password" placeholder="Password" required><br>
+  <button type="submit">Login</button>
+</form>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+  const data = {
+    email: form.email.value,
+    password: form.password.value
+  };
+
+  const response = await fetch('/api/token/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+
+  if (response.ok) {
+    localStorage.setItem('access', result.access);
+    localStorage.setItem('refresh', result.refresh);
+    window.location.href = '/profile/';
+  } else {
+    alert("Login failed");
+  }
+});
+</script>
+
+
+
+
+
+
+
+
+
+<h2>Profile Page</h2>
+<div id="profile"></div>
+
+<script>
+const token = localStorage.getItem('access');
+if (!token) {
+  window.location.href = '/signin/';
+}
+
+fetch('/api/profile/', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer ' + token
+  }
+})
+.then(res => res.json())
+.then(data => {
+  document.getElementById('profile').innerHTML = `
+    <p>Username: ${data.username}</p>
+    <p>Email: ${data.email}</p>
+    <p>First Name: ${data.first_name}</p>
+    <p>Last Name: ${data.last_name}</p>
+  `;
+})
+.catch(err => {
+  alert("Unauthorized, redirecting to login");
+  window.location.href = '/signin/';
+});
+</script> {% endcomment %}
