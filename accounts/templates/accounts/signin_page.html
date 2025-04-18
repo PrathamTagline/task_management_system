@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login Page{% endblock title %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/signin_page.css' %}">
+{% endblock styles %}
+
+{% block content %}
+    <div class="signin-container">
+        <div class="signin-header">
+            <h1>Welcome Back</h1>
+            <p>Please enter your credentials to signin</p>
+        </div>
+        
+        {% include "accounts/includes/signin_page_form.html" %}
+
+    </div>
+    
+    <script src="{% static 'js/signin_page.js' %}"></script>
+
+{% endblock content%}

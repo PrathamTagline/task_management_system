@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}SignUp{% endblock title %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/signup_page.css' %}">
+{% endblock styles %}
+
+{% block content %}
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Create Account</h1>
+            <p>Please fill in the details to sign up</p>
+        </div>
+        
+        {% include "accounts/includes/signup_page_form.html" %}
+    </div>
+{% endblock content%}
+
+
