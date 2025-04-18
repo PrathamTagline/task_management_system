@@ -4,7 +4,7 @@ from task_manager_webapp import settings
 from . import views
 
 urlpatterns = [
-    
+    path('dashboard/', views.dashboard_view, name='dashboard_page'),
 ]
 
 if settings.DEBUG:
