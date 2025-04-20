@@ -1,3 +1,8 @@
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: #f8f9fa;
     color: #333;
