@@ -9,13 +9,9 @@
 
 {% block content %}
     <div class="signup-container">
-        <div class="signup-header">
-            <h1>Create Account</h1>
-            <p>Please fill in the details to sign up</p>
-        </div>
-        
-        {% include "accounts/includes/signup_page_form.html" %}
+        {% include "accounts/includes/signup_page_components/signup_page_header.html" %}
+        {% include "accounts/includes/signup_page_components/signup_page_form.html" %}
     </div>
     
-    <script src="{% static 'js/signup_page.js' %}"></script>
+    <script type="module" src="{% static 'js/signup_logic.js' %}"></script>
 {% endblock content%}

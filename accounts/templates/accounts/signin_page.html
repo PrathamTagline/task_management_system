@@ -8,15 +8,9 @@
 
 {% block content %}
     <div class="signin-container">
-        <div class="signin-header">
-            <h1>Welcome Back</h1>
-            <p>Please enter your credentials to signin</p>
-        </div>
-        
-        {% include "accounts/includes/signin_page_form.html" %}
-
+        {% include "accounts/includes/signin_page_components/signin_page_header.html" %}
+        {% include "accounts/includes/signin_page_components/signin_page_form.html" %}
     </div>
-    
-    <script src="{% static 'js/signin_page.js' %}"></script>
 
+    <script type="module" src="{% static 'js/sigin_logic.js' %}"></script>
 {% endblock content%}
