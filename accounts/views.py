@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenVerifyView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import CustomTokenObtainPairSerializer, RegisterSerializer,ProfileSerializer
@@ -13,6 +13,14 @@ from rest_framework.generics import RetrieveUpdateAPIView
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+
+class CustomTokenVerifyView(TokenVerifyView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            return Response({"message": "Token is valid"}, status=status.HTTP_200_OK)
+        return response
+    
 # Auto-login Register view
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
