@@ -1,185 +1,166 @@
-// Function to handle toggling between views
-function toggleView(viewId) {
-    // Hide all views
-    document.getElementById('projects-view').style.display = 'none';
-    document.getElementById('dashboard-view').style.display = 'none';
-    
-    // Show the selected view
-    document.getElementById(viewId).style.display = 'block';
-  }
-  
-  // Function to handle nav item selection
-  function setActiveNavItem(element) {
-    // Remove active class from all nav items
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-      item.classList.remove('active');
+import { elements } from './dashboard_page_scripts/elements.js';
+import { toggleView, setActiveNavItem, toggleSubNav } from './dashboard_page_scripts/functions.js';
+import { fetchProjects, logoutUser } from './dashboard_page_scripts/apiService.js';
+
+document.addEventListener('DOMContentLoaded', async function () {
+    // Projects nav
+    elements.projectsNavItem.addEventListener('click', function () {
+        setActiveNavItem(this);
+        toggleView('projects-view');
+        toggleSubNav('projects-sub-nav', 'projects-chevron');
     });
-    
-    // Remove active class from all sub-nav items
-    const subNavItems = document.querySelectorAll('.sub-nav-item');
-    subNavItems.forEach(item => {
-      item.classList.remove('active');
-    });
-    
-    // Add active class to clicked element
-    element.classList.add('active');
-  }
-  
-  // Function to toggle sub-nav visibility
-  function toggleSubNav(subNavId, chevronId) {
-    const subNav = document.getElementById(subNavId);
-    const chevron = document.getElementById(chevronId);
-    
-    subNav.classList.toggle('expanded');
-    chevron.classList.toggle('expanded');
-  }
-  
-  // Initialize event listeners
-  document.addEventListener('DOMContentLoaded', function() {
-    // Event listener for Projects nav item
-    const projectsNavItem = document.getElementById('projects-nav-item');
-    projectsNavItem.addEventListener('click', function() {
-      setActiveNavItem(this);
-      toggleView('projects-view');
-      toggleSubNav('projects-sub-nav', 'projects-chevron');
-    });
-    
-    // Event listener for "View all projects" link
-    const viewAllProjectsLink = document.getElementById('view-all-projects-link');
-    viewAllProjectsLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      toggleView('projects-view');
-      setActiveNavItem(document.getElementById('projects-nav-item'));
-      
-      // Ensure sub-nav is expanded
-      const subNav = document.getElementById('projects-sub-nav');
-      const chevron = document.getElementById('projects-chevron');
-      if (!subNav.classList.contains('expanded')) {
-        subNav.classList.add('expanded');
-        chevron.classList.add('expanded');
-      }
-    });
-    
-    // Event listener for "View all projects" in sub-nav
-    const viewAllProjects = document.getElementById('view-all-projects');
-    viewAllProjects.addEventListener('click', function() {
-      toggleView('projects-view');
-      
-      // Set this sub-nav item as active
-      const subNavItems = document.querySelectorAll('.sub-nav-item');
-      subNavItems.forEach(item => {
-        item.classList.remove('active');
-      });
-      this.classList.add('active');
-    });
-    
-    // Event listeners for all nav items
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-      if (item.id !== 'projects-nav-item') { // We already handled this one
-        item.addEventListener('click', function() {
-          setActiveNavItem(this);
-          const viewId = this.dataset.section;
-          if (viewId && viewId !== 'projects-view') {
-            toggleView('dashboard-view'); // Default to dashboard for now
-          }
-        });
-      }
-    });
-    
-    // Event listeners for project sub-nav items
-    const projectSubNavItems = document.querySelectorAll('.sub-nav-item');
-    projectSubNavItems.forEach(item => {
-      if (item.id !== 'view-all-projects') { // We already handled this one
-        item.addEventListener('click', function() {
-          // Set parent nav item as active
-          setActiveNavItem(document.getElementById('projects-nav-item'));
-          
-          // Set this sub-nav item as active too
-          const subNavItems = document.querySelectorAll('.sub-nav-item');
-          subNavItems.forEach(item => {
-            item.classList.remove('active');
-          });
-          this.classList.add('active');
-          
-          // Go to dashboard view (in a real app, this would show the specific project)
-          toggleView('dashboard-view');
-        });
-      }
-    });
-    
-    // Event listeners for project list items
-    const projectListItems = document.querySelectorAll('.project-list-item');
-    projectListItems.forEach(item => {
-      item.addEventListener('click', function() {
-        const projectId = this.dataset.project;
-        
-        // Set Projects nav item as active
-        setActiveNavItem(document.getElementById('projects-nav-item'));
-        
-        // Ensure projects sub-nav is expanded
-        const subNav = document.getElementById('projects-sub-nav');
-        const chevron = document.getElementById('projects-chevron');
-        if (!subNav.classList.contains('expanded')) {
-          subNav.classList.add('expanded');
-          chevron.classList.add('expanded');
+
+    // View all projects
+    elements.viewAllProjectsLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        toggleView('projects-view');
+        setActiveNavItem(elements.projectsNavItem);
+
+        if (!elements.subNav.classList.contains('expanded')) {
+            elements.subNav.classList.add('expanded');
+            elements.chevron.classList.add('expanded');
         }
-        
-        // Set the corresponding sub-nav item as active
-        const subNavItems = document.querySelectorAll('.sub-nav-item');
-        subNavItems.forEach(navItem => {
-          if (navItem.dataset.project === projectId) {
-            navItem.classList.add('active');
-          } else {
-            navItem.classList.remove('active');
-          }
+    });
+
+    elements.viewAllProjects.addEventListener('click', function () {
+        toggleView('projects-view');
+        elements.subNavItems.forEach(item => item.classList.remove('active'));
+        this.classList.add('active');
+    });
+
+    elements.navItems.forEach(item => {
+        if (item.id !== 'projects-nav-item') {
+            item.addEventListener('click', function () {
+                setActiveNavItem(this);
+                toggleView('dashboard-view');
+            });
+        }
+    });
+
+    elements.subNavItems.forEach(item => {
+        if (item.id !== 'view-all-projects') {
+            item.addEventListener('click', function () {
+                setActiveNavItem(elements.projectsNavItem);
+                elements.subNavItems.forEach(sub => sub.classList.remove('active'));
+                this.classList.add('active');
+                toggleView('dashboard-view');
+            });
+        }
+    });
+
+    elements.projectListItems.forEach(item => {
+        item.addEventListener('click', function () {
+            const projectId = this.dataset.project;
+
+            setActiveNavItem(elements.projectsNavItem);
+
+            if (!elements.subNav.classList.contains('expanded')) {
+                elements.subNav.classList.add('expanded');
+                elements.chevron.classList.add('expanded');
+            }
+
+            elements.subNavItems.forEach(navItem => {
+                navItem.dataset.project === projectId
+                    ? navItem.classList.add('active')
+                    : navItem.classList.remove('active');
+            });
+
+            toggleView('dashboard-view');
         });
-        
-        // Go to dashboard view (in a real app, this would show the specific project)
-        toggleView('dashboard-view');
-      });
     });
 
-    const avatar = document.getElementById('avatar');
-    const popupMenu = document.getElementById('popup-menu');
-    const profileLink = document.getElementById('profile-link');
-    const logoutLink = document.getElementById('logout-link');
-
-    // Toggle popup menu visibility
-    avatar.addEventListener('click', () => {
-        popupMenu.style.display = popupMenu.style.display === 'block' ? 'none' : 'block';
+    // Profile popup
+    elements.avatar.addEventListener('click', () => {
+        elements.popupMenu.style.display = elements.popupMenu.style.display === 'block' ? 'none' : 'block';
     });
 
-    // Close the popup menu when clicking outside
     document.addEventListener('click', (event) => {
-        if (!avatar.contains(event.target) && !popupMenu.contains(event.target)) {
-            popupMenu.style.display = 'none';
+        if (!elements.avatar.contains(event.target) && !elements.popupMenu.contains(event.target)) {
+            elements.popupMenu.style.display = 'none';
         }
     });
 
-    // Handle Profile click
-    profileLink.addEventListener('click', () => {
-        window.location.href = '/accounts/profile/'; // Redirect to the profile page
+    elements.profileLink.addEventListener('click', () => {
+        window.location.href = '/accounts/profile/';
     });
 
-    // Handle Logout click
-    logoutLink.addEventListener('click', () => {
-        // Clear tokens from localStorage
+    elements.logoutLink.addEventListener('click', () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
 
-        // Optionally, make a request to the backend to clear cookies
-        fetch('/accounts/signout/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(() => {
-            // Redirect to the login page
-            window.location.href = '/accounts/signin/';
-        })
-        .catch(err => console.error('Error during logout:', err));
+        logoutUser()
+            .then(() => window.location.href = '/accounts/signin/')
+            .catch(err => console.error('Logout error:', err));
     });
-  });
+
+    // Fetch projects
+    const projectsContainer = document.getElementById('projects-grid'); // The container for projects
+    const subNav = document.getElementById('projects-sub-nav'); // The sub navigation for projects
+
+    async function updateProjects() {
+        try {
+            // Fetch projects data
+            const projects = await fetchProjects();
+            console.log('Fetched projects:', projects);
+            // Clear the container before adding new content
+
+            subNav.innerHTML = ''; // Clear sub navigation
+            projectsContainer.innerHTML = '';
+
+            // Loop through the projects and create HTML for each project
+            projects.forEach(project => {
+                // Create a project card
+
+                const sub_nav_item = document.createElement('div');
+                sub_nav_item.classList.add('sub-nav-item');
+                sub_nav_item.id = project.key;
+
+                sub_nav_item.innerHTML = ` <span>${project.name}</span>`;
+
+                const projectCard = document.createElement('div');
+                projectCard.classList.add('project-card');
+
+                // Add project details to the card
+                projectCard.innerHTML = `
+                    <div class="project-header">
+                        <div class="project-icon">${project.name.charAt(0).toUpperCase()}</div>
+                        <div class="project-info">
+                            <h3>${project.name}</h3>
+                            <p>${project.description || 'No description available.'}</p>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="content-header">Recent queues</div>
+                        <div class="content-list">
+                            <div class="content-item">
+                                <span>All open</span>
+                                <span class="content-item-count">${project.all_open || 0}</span>
+                            </div>
+                            <div class="content-item">
+                                <span>Open tasks</span>
+                                <span class="content-item-count">${project.open_tasks || 0}</span>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <span>${project.queues || 0} queues</span>
+                            <span style="margin-left: 4px;">▼</span>
+                        </div>
+                    </div>
+                `;
+
+                // Append the project card to the container
+                projectsContainer.appendChild(projectCard);
+                subNav.appendChild(sub_nav_item);
+            });
+
+            
+        } catch (error) {
+            console.error('Error updating projects:', error);
+            projectsContainer.innerHTML = '<p>Error loading projects. Please try again later.</p>';
+        }
+    }
+
+    // Call updateProjects every 5 seconds
+    updateProjects(); // Initial call to load projects immediately
+    setInterval(updateProjects, 5000); // Call every 5 seconds
+});
