@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'accounts',
     'core',
+    'projects',
 ]
 # REST Framework settings
 REST_FRAMEWORK = {
