@@ -20,6 +20,7 @@ urlpatterns = [
     #Login Page
     path('signin/', views.signin_page_view, name='signin_page'),
     path('signup/', views.signup_page_view, name='signup_page'),
+    path('signout/', views.signout_view, name='signout'),
     path('profile/', views.profile_page_view, name='profile_page'),
 ]
 

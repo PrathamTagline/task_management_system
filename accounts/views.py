@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenVerifyView
 from rest_framework.response import Response
@@ -42,6 +43,15 @@ class RegisterView(generics.CreateAPIView):
                 'email': user.email,
             }
         }, status=status.HTTP_201_CREATED)
+    
+
+
+def signout_view(request):
+    response = JsonResponse({"message": "Successfully signed out"})
+    # Delete tokens from cookies (if stored)
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
+    return response
 
 # Profile view
 class ProfileView(RetrieveUpdateAPIView):

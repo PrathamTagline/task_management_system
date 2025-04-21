@@ -140,4 +140,46 @@ function toggleView(viewId) {
         toggleView('dashboard-view');
       });
     });
+
+    const avatar = document.getElementById('avatar');
+    const popupMenu = document.getElementById('popup-menu');
+    const profileLink = document.getElementById('profile-link');
+    const logoutLink = document.getElementById('logout-link');
+
+    // Toggle popup menu visibility
+    avatar.addEventListener('click', () => {
+        popupMenu.style.display = popupMenu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Close the popup menu when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!avatar.contains(event.target) && !popupMenu.contains(event.target)) {
+            popupMenu.style.display = 'none';
+        }
+    });
+
+    // Handle Profile click
+    profileLink.addEventListener('click', () => {
+        window.location.href = '/accounts/profile/'; // Redirect to the profile page
+    });
+
+    // Handle Logout click
+    logoutLink.addEventListener('click', () => {
+        // Clear tokens from localStorage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+
+        // Optionally, make a request to the backend to clear cookies
+        fetch('/accounts/signout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(() => {
+            // Redirect to the login page
+            window.location.href = '/accounts/signin/';
+        })
+        .catch(err => console.error('Error during logout:', err));
+    });
   });

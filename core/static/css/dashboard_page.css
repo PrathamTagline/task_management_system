@@ -1,112 +1,92 @@
 body {
     background-color: #f4f5f7;
-  }
-  
-  .container {
     display: flex;
+    flex-direction: column;
     height: 100vh;
   }
+
+  /* Top navigation bar */
+  .top-nav {
+    background-color: #0052cc;
+    color: white;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .top-nav-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 24px;
+  }
+
+  .top-nav-links {
+    display: flex;
+    height: 100%;
+  }
+
+  .top-nav-link {
+    color: white;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .top-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .top-nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 -3px 0 white;
+  }
+
+  .top-nav-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: white;
+    color: #0052cc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-left: 16px;
+  }
   
+  /* Container for sidebar and main content */
+  .content-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  /* Sidebar */
   .sidebar {
     width: 240px;
     background-color: #fafbfc;
     border-right: 1px solid #dfe1e6;
-    padding: 10px 0;
     overflow-y: auto;
-  }
-  
-  .main-content {
-    flex: 1;
-    padding: 20px 30px;
-    overflow-y: auto;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #dfe1e6;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  
-  .logo-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .jira-logo {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-    background-color: #0052cc;
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .search-bar {
-    flex: 1;
-    margin: 0 16px;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-    font-size: 14px;
-  }
-  
-  .buttons {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .create-btn {
-    background-color: #0052cc;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-weight: 500;
-  }
-  
-  .icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #42526e;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .icon-btn:hover {
-    background-color: #f4f5f7;
-  }
-  
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #0052cc;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+    flex-shrink: 0;
   }
   
   .nav-item {
@@ -144,6 +124,60 @@ body {
     width: 100%;
   }
   
+  /* Sub navigation */
+  .sub-nav {
+    display: none;
+    padding-left: 36px; /* Indent nested items */
+  }
+  
+  .sub-nav.expanded {
+    display: block;
+  }
+  
+  .sub-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    color: #42526e;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .sub-nav-item:hover {
+    color: #0052cc;
+  }
+  
+  .sub-nav-item.active {
+    color: #0052cc;
+    font-weight: 500;
+  }
+  
+  .chevron {
+    transition: transform 0.3s ease;
+  }
+  
+  .chevron.expanded {
+    transform: rotate(90deg);
+  }
+  
+  .premium-badge {
+    background-color: #ebecf0;
+    color: #172b4d;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-left: 8px;
+  }
+  
+  /* Main content */
+  .main-content {
+    flex: 1;
+    padding: 20px 30px;
+    overflow-y: auto;
+  }
+  
   .section-title {
     font-size: 24px;
     font-weight: 500;
@@ -170,6 +204,7 @@ body {
     font-size: 14px;
   }
   
+  /* Projects grid */
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -219,6 +254,18 @@ body {
   
   .discovery-icon {
     background-color: #00a3bf;
+  }
+  
+  .extra-project-icon {
+    background-color: #ff5630;
+  }
+
+  .more-project-icon {
+    background-color: #36b37e;
+  }
+
+  .team-project-icon {
+    background-color: #ffab00;
   }
   
   .project-info h3 {
@@ -272,6 +319,7 @@ body {
     cursor: pointer;
   }
   
+  /* Tabs */
   .tabs {
     display: flex;
     margin-bottom: 20px;
@@ -297,6 +345,7 @@ body {
     margin-bottom: -2px;
   }
   
+  /* Task list */
   .task-list-header {
     font-size: 12px;
     font-weight: 500;
@@ -345,15 +394,6 @@ body {
     color: #172b4d;
   }
   
-  .premium-badge {
-    background-color: #ebecf0;
-    color: #172b4d;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-weight: 500;
-  }
-
   .header-actions {
     display: flex;
     align-items: center;
@@ -378,7 +418,16 @@ body {
   .add-project-btn:hover {
     background-color: #deebff;
   }
+  
+  /* Project list view */
+  #projects-view {
+    display: none;
+  }
 
+  #dashboard-view {
+    display: block;
+  }
+  
   .all-projects-list {
     list-style: none;
   }
@@ -407,60 +456,93 @@ body {
     color: white;
     font-weight: bold;
   }
-
-  #projects-view {
-    display: none;
-  }
-
-  #dashboard-view {
-    display: block;
-  }
-
-  .extra-project-icon {
-    background-color: #ff5630;
-  }
-
-  .more-project-icon {
-    background-color: #36b37e;
-  }
-
-  .team-project-icon {
-    background-color: #ffab00;
+  
+  /* Search */
+  .search-input {
+    width: 240px;
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: background-color 0.2s;
   }
   
-  /* New styles for nested navigation */
-  .sub-nav {
-    display: none;
-    padding-left: 36px; /* Indent nested items */
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
   }
   
-  .sub-nav.expanded {
-    display: block;
+  .search-input:focus {
+    outline: none;
+    background-color: white;
+    color: #172b4d;
   }
   
-  .sub-nav-item {
+  .search-input:focus::placeholder {
+    color: #6b778c;
+  }
+  
+  .create-btn {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .create-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    padding: 8px 0;
-    color: #42526e;
-    text-decoration: none;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+  
+  .icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Popup menu styles */
+.popup-menu {
+    display: none; /* Initially hidden */
+    position: absolute;
+    top: 60px; /* Adjust based on avatar position */
+    right: 20px; /* Adjust based on avatar position */
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 150px;
+}
+
+.popup-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.popup-menu ul li {
+    padding: 10px 15px;
     cursor: pointer;
-    transition: color 0.2s ease;
-  }
-  
-  .sub-nav-item:hover {
-    color: #0052cc;
-  }
-  
-  .sub-nav-item.active {
-    color: #0052cc;
-    font-weight: 500;
-  }
-  
-  .chevron {
-    transition: transform 0.3s ease;
-  }
-  
-  .chevron.expanded {
-    transform: rotate(90deg);
-  }
+    font-size: 14px;
+    color: #333;
+}
+
+.popup-menu ul li:hover {
+    background-color: #f5f5f5;
+}
