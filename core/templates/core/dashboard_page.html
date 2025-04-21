@@ -12,3 +12,936 @@ dashboard
 {% block content %}
 <h1>dashboard</h1>
 {% endblock content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jira Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: #f4f5f7;
+    }
+    
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    
+    .sidebar {
+      width: 240px;
+      background-color: #fafbfc;
+      border-right: 1px solid #dfe1e6;
+      padding: 10px 0;
+      overflow-y: auto;
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: 20px 30px;
+      overflow-y: auto;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #dfe1e6;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    .jira-logo {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      background-color: #0052cc;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .search-bar {
+      flex: 1;
+      margin: 0 16px;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      font-size: 14px;
+    }
+    
+    .buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .create-btn {
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #42526e;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .icon-btn:hover {
+      background-color: #f4f5f7;
+    }
+    
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #0052cc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      color: #42526e;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .nav-item:hover {
+      background-color: #ebecf0;
+    }
+    
+    .nav-item.active {
+      background-color: #deebff;
+      color: #0052cc;
+      font-weight: 500;
+    }
+    
+    .nav-icon {
+      margin-right: 12px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .with-chevron {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #172b4d;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .section-title-small {
+      font-size: 16px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+    
+    .view-all {
+      color: #0052cc;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .project-card {
+      background-color: white;
+      border-radius: 3px;
+      border: 1px solid #dfe1e6;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .project-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .project-header {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .project-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .support-icon {
+      background-color: #0052cc;
+    }
+    
+    .task-icon {
+      background-color: #6554c0;
+    }
+    
+    .discovery-icon {
+      background-color: #00a3bf;
+    }
+    
+    .project-info h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #172b4d;
+    }
+    
+    .project-info p {
+      font-size: 12px;
+      color: #6b778c;
+    }
+    
+    .project-content {
+      border-top: 1px solid #dfe1e6;
+      padding: 16px;
+    }
+    
+    .content-header {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6b778c;
+      margin-bottom: 12px;
+    }
+    
+    .content-list {
+      margin-bottom: 12px;
+    }
+    
+    .content-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #172b4d;
+    }
+    
+    .content-item-count {
+      background-color: #ebecf0;
+      border-radius: 3px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+    
+    .dropdown {
+      font-size: 12px;
+      color: #6b778c;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #dfe1e6;
+    }
+    
+    .tab {
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #6b778c;
+      transition: color 0.2s ease;
+    }
+    
+    .tab:hover {
+      color: #0052cc;
+    }
+    
+    .tab.active {
+      color: #0052cc;
+      font-weight: 500;
+      border-bottom: 2px solid #0052cc;
+      margin-bottom: -2px;
+    }
+    
+    .task-list-header {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6b778c;
+      padding: 8px 0;
+    }
+    
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #dfe1e6;
+      transition: background-color 0.2s ease;
+    }
+    
+    .task-item:hover {
+      background-color: #f4f5f7;
+    }
+    
+    .task-checkbox {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+    }
+    
+    .task-info {
+      flex: 1;
+    }
+    
+    .task-title {
+      font-size: 14px;
+      color: #172b4d;
+      margin-bottom: 4px;
+    }
+    
+    .task-meta {
+      font-size: 12px;
+      color: #6b778c;
+    }
+    
+    .task-status {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 3px;
+      background-color: #ebecf0;
+      color: #172b4d;
+    }
+    
+    .premium-badge {
+      background-color: #ebecf0;
+      color: #172b4d;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .add-project-btn {
+      background: none;
+      border: none;
+      color: #0052cc;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-left: 12px;
+      transition: background-color 0.2s ease;
+    }
+
+    .add-project-btn:hover {
+      background-color: #deebff;
+    }
+
+    .all-projects-list {
+      list-style: none;
+    }
+
+    .project-list-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #dfe1e6;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .project-list-item:hover {
+      background-color: #f4f5f7;
+    }
+
+    .project-list-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 16px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    #projects-view {
+      display: none;
+    }
+
+    #dashboard-view {
+      display: block;
+    }
+
+    .extra-project-icon {
+      background-color: #ff5630;
+    }
+
+    .more-project-icon {
+      background-color: #36b37e;
+    }
+
+    .team-project-icon {
+      background-color: #ffab00;
+    }
+    
+    /* New styles for nested navigation */
+    .sub-nav {
+      display: none;
+      padding-left: 36px; /* Indent nested items */
+    }
+    
+    .sub-nav.expanded {
+      display: block;
+    }
+    
+    .sub-nav-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      color: #42526e;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    
+    .sub-nav-item:hover {
+      color: #0052cc;
+    }
+    
+    .sub-nav-item.active {
+      color: #0052cc;
+      font-weight: 500;
+    }
+    
+    .chevron {
+      transition: transform 0.3s ease;
+    }
+    
+    .chevron.expanded {
+      transform: rotate(90deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="nav-item" data-section="for-you-view">
+        <div class="nav-icon">📌</div>
+        <div class="with-chevron">
+          <span>For you</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="nav-item" data-section="recent-view">
+        <div class="nav-icon">🕒</div>
+        <div class="with-chevron">
+          <span>Recent</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="nav-item" data-section="starred-view">
+        <div class="nav-icon">⭐</div>
+        <div class="with-chevron">
+          <span>Starred</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="nav-item" data-section="apps-view">
+        <div class="nav-icon">📱</div>
+        <span>Apps</span>
+      </div>
+      <div class="nav-item" data-section="plans-view">
+        <div class="nav-icon">📝</div>
+        <div class="with-chevron">
+          <span>Plans</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="nav-item" data-section="filters-view">
+        <div class="nav-icon">🔍</div>
+        <div class="with-chevron">
+          <span>Filters</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="nav-item" data-section="dashboards-view">
+        <div class="nav-icon">📊</div>
+        <span>Dashboards</span>
+      </div>
+      <div class="nav-item" data-section="operations-view">
+        <div class="nav-icon">⚙️</div>
+        <span>Operations</span>
+      </div>
+      <div class="nav-item" data-section="assets-view">
+        <div class="nav-icon">💎</div>
+        <span>Assets</span>
+        <span class="premium-badge">PREMIUM</span>
+      </div>
+      <div class="nav-item" data-section="teams-view">
+        <div class="nav-icon">👥</div>
+        <span>Teams</span>
+      </div>
+      <div class="nav-item" data-section="projects-view" id="projects-nav-item">
+        <div class="nav-icon">📂</div>
+        <div class="with-chevron">
+          <span>Projects</span>
+          <span class="chevron" id="projects-chevron">›</span>
+        </div>
+      </div>
+      
+      <!-- Sub navigation for Projects -->
+      <div class="sub-nav" id="projects-sub-nav">
+        <div class="sub-nav-item" data-project="support">
+          <div class="nav-icon">📦</div>
+          <span>Support</span>
+        </div>
+        <div class="sub-nav-item" data-project="task-manager">
+          <div class="nav-icon">⏱️</div>
+          <span>Real-time Task Manager</span>
+        </div>
+        <div class="sub-nav-item" data-project="discovery">
+          <div class="nav-icon">🔍</div>
+          <span>My discovery project</span>
+        </div>
+        <div class="sub-nav-item" data-project="devops">
+          <div class="nav-icon">🛠️</div>
+          <span>DevOps Integration</span>
+        </div>
+        <div class="sub-nav-item" data-project="mobile">
+          <div class="nav-icon">📱</div>
+          <span>Mobile App Development</span>
+        </div>
+        <div class="sub-nav-item" data-project="team">
+          <div class="nav-icon">👥</div>
+          <span>Team Productivity</span>
+        </div>
+        <div class="sub-nav-item" id="view-all-projects">
+          <div class="nav-icon">📂</div>
+          <span>View all projects</span>
+        </div>
+      </div>
+      
+      <div class="nav-item" data-section="customize-view">
+        <div class="nav-icon">⚙️</div>
+        <span>Customize sidebar</span>
+      </div>
+    </div>
+    
+    <div style="flex: 1; display: flex; flex-direction: column;">
+      <div class="header">
+        <div class="logo-container">
+          <div class="icon-btn">
+            <div style="width: 16px; height: 16px; border: 2px solid #42526e;"></div>
+          </div>
+          <div class="icon-btn">
+            <div style="display: grid; grid-template: repeat(2, 6px) / repeat(2, 6px); gap: 2px;">
+              <div style="background-color: #42526e; width: 6px; height: 6px;"></div>
+              <div style="background-color: #42526e; width: 6px; height: 6px;"></div>
+              <div style="background-color: #42526e; width: 6px; height: 6px;"></div>
+              <div style="background-color: #42526e; width: 6px; height: 6px;"></div>
+            </div>
+          </div>
+          <div class="jira-logo">J</div>
+          <span style="font-weight: 500; color: #172b4d;">Jira</span>
+        </div>
+        
+        <div class="search-bar">
+          <input type="text" class="search-input" placeholder="Search">
+        </div>
+        
+        <div class="buttons">
+          <button class="create-btn">Create</button>
+          <button class="icon-btn">🔔</button>
+          <button class="icon-btn">❓</button>
+          <button class="icon-btn">⚙️</button>
+          <div class="avatar">PP</div>
+        </div>
+      </div>
+      
+      <div id="dashboard-view" class="main-content">
+        <h1 class="section-title">For you</h1>
+        
+        <div class="section-header">
+          <h2 class="section-title-small">Recent projects</h2>
+          <div class="header-actions">
+            <a href="#" class="view-all" id="view-all-projects-link">View all projects</a>
+            <button class="add-project-btn">+</button>
+          </div>
+        </div>
+        
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-icon support-icon">S</div>
+              <div class="project-info">
+                <h3>Support</h3>
+                <p>Service management</p>
+              </div>
+            </div>
+            <div class="project-content">
+              <div class="content-header">Recent queues</div>
+              <div class="content-list">
+                <div class="content-item">
+                  <span>All open</span>
+                  <span class="content-item-count">2</span>
+                </div>
+                <div class="content-item">
+                  <span>Open tasks</span>
+                  <span class="content-item-count">1</span>
+                </div>
+              </div>
+              <div class="dropdown">
+                <span>3 queues</span>
+                <span style="margin-left: 4px;">▼</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-icon task-icon">R</div>
+              <div class="project-info">
+                <h3>Real-time Task Manager</h3>
+                <p>Product Discovery</p>
+              </div>
+            </div>
+            <div class="project-content">
+              <div class="content-header">Quick links</div>
+              <div class="content-list">
+                <div class="content-item">
+                  <span>My ideas</span>
+                  <span class="content-item-count">6</span>
+                </div>
+              </div>
+              <div class="dropdown">
+                <span>7 views</span>
+                <span style="margin-left: 4px;">▼</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-icon discovery-icon">M</div>
+              <div class="project-info">
+                <h3>My discovery project</h3>
+                <p>Product Discovery</p>
+              </div>
+            </div>
+            <div class="project-content">
+              <div class="content-header">Quick links</div>
+              <div class="content-list">
+                <div class="content-item">
+                  <span>My ideas</span>
+                  <span class="content-item-count">6</span>
+                </div>
+              </div>
+              <div class="dropdown">
+                <span>7 views</span>
+                <span style="margin-left: 4px;">▼</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tabs">
+          <div class="tab">Worked on</div>
+          <div class="tab">Viewed</div>
+          <div class="tab active">Assigned to me <span style="margin-left: 4px; background-color: #ebecf0; border-radius: 3px; padding: 0 6px;">1</span></div>
+          <div class="tab">Starred</div>
+          <div class="tab">Boards</div>
+        </div>
+        
+        <div class="task-list-header">OPEN</div>
+        
+        <div class="task-item">
+          <div class="task-checkbox">
+            <input type="checkbox">
+          </div>
+          <div class="task-info">
+            <div class="task-title">efwwafw</div>
+            <div class="task-meta">SUP-3 • Support</div>
+          </div>
+          <div class="task-status">Open</div>
+        </div>
+      </div>
+
+      <div id="projects-view" class="main-content">
+        <div class="section-header">
+          <h1 class="section-title">Projects</h1>
+          <button class="add-project-btn">+</button>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <input type="text" class="search-input" placeholder="Search projects" style="width: 300px;">
+        </div>
+
+        <ul class="all-projects-list">
+          <li class="project-list-item" data-project="support">
+            <div class="project-list-icon support-icon">S</div>
+            <div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Support</h3>
+              <p style="font-size: 14px; color: #6b778c;">Service management</p>
+            </div>
+          </li>
+          <li class="project-list-item" data-project="task-manager">
+            <div class="project-list-icon task-icon">R</div>
+            <div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Real-time Task Manager</h3>
+              <p style="font-size: 14px; color: #6b778c;">Product Discovery</p>
+            </div>
+          </li>
+          <li class="project-list-item" data-project="discovery">
+            <div class="project-list-icon discovery-icon">M</div>
+            <div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">My discovery project</h3>
+              <p style="font-size: 14px; color: #6b778c;">Product Discovery</p>
+            </div>
+          </li>
+          <li class="project-list-item" data-project="devops">
+            <div class="project-list-icon extra-project-icon">D</div>
+            <div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">DevOps Integration</h3>
+              <p style="font-size: 14px; color: #6b778c;">Engineering</p>
+            </div>
+          </li>
+          <li class="project-list-item" data-project="mobile">
+            <div class="project-list-icon more-project-icon">M</div>
+            <div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Mobile App Development</h3>
+              <p style="font-size: 14px; color: #6b778c;">Software Project</p>
+            </div>
+          </li>
+          <li class="project-list-item" data-project="team">
+            <div class="project-list-icon team-project-icon">T</div>
+            <div>
+              <h3 style="font-size: 16px; margin-bottom: 4px;">Team Productivity</h3>
+              <p style="font-size: 14px; color: #6b778c;">Business</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to handle toggling between views
+    function toggleView(viewId) {
+      // Hide all views
+      document.getElementById('projects-view').style.display = 'none';
+      document.getElementById('dashboard-view').style.display = 'none';
+      
+      // Show the selected view
+      document.getElementById(viewId).style.display = 'block';
+    }
+    
+    // Function to handle nav item selection
+    function setActiveNavItem(element) {
+      // Remove active class from all nav items
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Remove active class from all sub-nav items
+      const subNavItems = document.querySelectorAll('.sub-nav-item');
+      subNavItems.forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Add active class to clicked element
+      element.classList.add('active');
+    }
+    
+    // Function to toggle sub-nav visibility
+    function toggleSubNav(subNavId, chevronId) {
+      const subNav = document.getElementById(subNavId);
+      const chevron = document.getElementById(chevronId);
+      
+      subNav.classList.toggle('expanded');
+      chevron.classList.toggle('expanded');
+    }
+    
+    // Initialize event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Event listener for Projects nav item
+      const projectsNavItem = document.getElementById('projects-nav-item');
+      projectsNavItem.addEventListener('click', function() {
+        setActiveNavItem(this);
+        toggleView('projects-view');
+        toggleSubNav('projects-sub-nav', 'projects-chevron');
+      });
+      
+      // Event listener for "View all projects" link
+      const viewAllProjectsLink = document.getElementById('view-all-projects-link');
+      viewAllProjectsLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleView('projects-view');
+        setActiveNavItem(document.getElementById('projects-nav-item'));
+        
+        // Ensure sub-nav is expanded
+        const subNav = document.getElementById('projects-sub-nav');
+        const chevron = document.getElementById('projects-chevron');
+        if (!subNav.classList.contains('expanded')) {
+          subNav.classList.add('expanded');
+          chevron.classList.add('expanded');
+        }
+      });
+      
+      // Event listener for "View all projects" in sub-nav
+      const viewAllProjects = document.getElementById('view-all-projects');
+      viewAllProjects.addEventListener('click', function() {
+        toggleView('projects-view');
+        
+        // Set this sub-nav item as active
+        const subNavItems = document.querySelectorAll('.sub-nav-item');
+        subNavItems.forEach(item => {
+          item.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+      
+      // Event listeners for all nav items
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        if (item.id !== 'projects-nav-item') { // We already handled this one
+          item.addEventListener('click', function() {
+            setActiveNavItem(this);
+            const viewId = this.dataset.section;
+            if (viewId && viewId !== 'projects-view') {
+              toggleView('dashboard-view'); // Default to dashboard for now
+            }
+          });
+        }
+      });
+      
+      // Event listeners for project sub-nav items
+      const projectSubNavItems = document.querySelectorAll('.sub-nav-item');
+      projectSubNavItems.forEach(item => {
+        if (item.id !== 'view-all-projects') { // We already handled this one
+          item.addEventListener('click', function() {
+            // Set parent nav item as active
+            setActiveNavItem(document.getElementById('projects-nav-item'));
+            
+            // Set this sub-nav item as active too
+            const subNavItems = document.querySelectorAll('.sub-nav-item');
+            subNavItems.forEach(item => {
+              item.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // Go to dashboard view (in a real app, this would show the specific project)
+            toggleView('dashboard-view');
+          });
+        }
+      });
+      
+      // Event listeners for project list items
+      const projectListItems = document.querySelectorAll('.project-list-item');
+      projectListItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const projectId = this.dataset.project;
+          
+          // Set Projects nav item as active
+          setActiveNavItem(document.getElementById('projects-nav-item'));
+          
+          // Ensure projects sub-nav is expanded
+          const subNav = document.getElementById('projects-sub-nav');
+          const chevron = document.getElementById('projects-chevron');
+          if (!subNav.classList.contains('expanded')) {
+            subNav.classList.add('expanded');
+            chevron.classList.add('expanded');
+          }
+          
+          // Set the corresponding sub-nav item as active
+          const subNavItems = document.querySelectorAll('.sub-nav-item');
+          subNavItems.forEach(navItem => {
+            if (navItem.dataset.project === projectId) {
+              navItem.classList.add('active');
+            } else {
+              navItem.classList.remove('active');
+            }
+          });
+          
+          // Go to dashboard view (in a real app, this would show the specific project)
+          toggleView('dashboard-view');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
