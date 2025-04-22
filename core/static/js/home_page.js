@@ -11,19 +11,17 @@ if (accessToken) {
   })
   .then(res => {
     if (res.ok) {
+      // Redirect to dashboard if token is valid
       window.location.href = "/dashboard/";
     } else {
       console.error("Token verification failed:", res.status);
-      // Redirect to signin if token is invalid
-      window.location.href = "accounts/signin/";
+      // Stay on the home page if token is invalid
     }
   })
   .catch(err => {
     console.error("Error verifying token:", err);
-    // Redirect to signin on error
-    window.location.href = "accounts/signin/";
+    // Stay on the home page on error
   });
 } else {
-  // Redirect to signin if no token is found
-  window.location.href = "accounts/signin/";
-} 
+  // Stay on the home page if no token is found
+}
