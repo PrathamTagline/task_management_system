@@ -163,4 +163,34 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Call updateProjects every 5 seconds
     updateProjects(); // Initial call to load projects immediately
     setInterval(updateProjects, 5000); // Call every 5 seconds
+
+
+    const links = document.querySelectorAll('.top-nav-links a');
+    const contentArea = document.getElementById('dashboard-view');
+
+    links.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const title = this.getAttribute('data-title');
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    contentArea.innerHTML = html;
+                    window.history.pushState({}, '', url);  // update the URL
+                    document.title = title;
+                });
+        });
+    });
+
+    // Handle back/forward buttons
+    window.addEventListener('popstate', function () {
+        fetch(location.pathname)
+            .then(response => response.text())
+            .then(html => {
+                contentArea.innerHTML = html;
+            });
+    });
+
 });

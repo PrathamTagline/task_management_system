@@ -12,6 +12,7 @@ router.register(r'api/projects', views.ProjectViewSet, basename='project')
 urlpatterns = [
     # Include the router's URLs (for API endpoints)
     path('', include(router.urls)),
+    path('create/', views.create_project, name='create_project'),
 ]
 
 # Serve media files during development (if DEBUG is True)

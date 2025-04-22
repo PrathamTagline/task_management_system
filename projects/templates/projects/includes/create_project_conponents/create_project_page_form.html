@@ -1,0 +1,61 @@
+<form class="create-project-form">
+    <!-- Project Title Section -->
+    <div class="form-section">
+      <label class="form-label required">Project Title</label>
+      <input
+        type="text"
+        class="form-input"
+        id="project-title"
+        placeholder="Enter project title"
+        required
+      />
+      <!-- Error message for Project Title -->
+      <div id="title-error" class="error-message"></div>
+    </div>
+
+    <!-- Project Icon Section -->
+    <div class="form-section">
+      <label class="form-label">Project Icon</label>
+      <label for="image-upload" class="image-upload-container">
+        <div class="upload-icon">+</div>
+        <div class="upload-text">Upload Image</div>
+        <img id="image-preview" class="image-preview" src="" alt="Preview" />
+      </label>
+      <input type="file" id="image-upload" accept="image/*" />
+      <div class="form-helper">Recommended: 120x120px, PNG or JPG</div>
+      <!-- Error message for Project Icon -->
+      <div id="icon-error" class="error-message"></div>
+    </div>
+
+    <!-- Project Description Section -->
+    <div class="form-section">
+      <label class="form-label required">Project Description</label>
+      <textarea
+        class="form-textarea"
+        id="project-description"
+        placeholder="Describe your project..."
+        required
+      ></textarea>
+      <!-- Error message for Project Description -->
+      <div id="description-error" class="error-message"></div>
+    </div>
+
+    <!-- Project Type Section -->
+    <div class="form-section">
+      <label class="form-label required" for="project-type">Project Type</label>
+      <select id="project-type" class="form-select" required>
+        <option value="" disabled selected>Select a project type</option>
+        <option value="support">Support - Help desk and user support projects</option>
+        <option value="task-management">Task Management - Track tasks and workflow</option>
+        <option value="discovery">Discovery - Research and discovery projects</option>
+      </select>
+      <!-- Error message for Project Type -->
+      <div id="type-error" class="error-message"></div>
+    </div>
+
+    <!-- Form Buttons -->
+    <div class="form-buttons">
+      <button type="button" class="cancel-btn">Cancel</button>
+      <button type="submit" class="submit-btn">Create Project</button>
+    </div>
+</form>
