@@ -10,9 +10,10 @@ router.register(r'api/projects', views.ProjectViewSet, basename='project')
 
 # Define the urlpatterns list
 urlpatterns = [
-    # Include the router's URLs (for API endpoints)
+    # Include the router's URLs (for API endpoints)``
     path('', include(router.urls)),
     path('create/', views.create_project, name='create_project'),
+    path('boarding/', views.boarding_view, name='boarding_page'),
 ]
 
 # Serve media files during development (if DEBUG is True)

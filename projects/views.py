@@ -32,3 +32,5 @@ def create_project(request):
     return render(request, 'projects/create_project_page.html')
 
 
+def boarding_view(request):
+    return render(request, 'projects/boarding_page.html')
