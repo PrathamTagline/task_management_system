@@ -1,40 +1,37 @@
- // Preview uploaded image
- document.getElementById('image-upload').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const preview = document.getElementById('image-preview');
-        preview.src = event.target.result;
-        preview.classList.add('active');
+const form = document.getElementById('create-project-form');
+
+form.addEventListener('submit', async function (event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  // Gather form data
+  const formData = new FormData();
+  formData.append('name', document.getElementById('project-title').value.trim());
+  formData.append('description', document.getElementById('project-description').value.trim());
+  formData.append('type', document.getElementById('project-type').value);
+
+  try {
+      // Send the POST request to the API endpoint
+      const response = await fetch('projects/api/projects/', {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          },
+          body: formData, // Send the form data
+      });
+
+      if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Error response:', errorData);
+          throw new Error('Failed to create project. Please try again.');
       }
-      reader.readAsDataURL(file);
-    }
-  });
 
-//   // Select project type
-//   function selectProjectType(element) {
-//     // Remove selected class from all cards
-//     document.querySelectorAll('.project-type-card').forEach(card => {
-//       card.classList.remove('selected');
-//     });
-    
-//     // Add selected class to clicked card
-//     element.classList.add('selected');
-//   }
-//   import { validateForm } from './create_project_page_form_validation.js';
+      const data = await response.json();
+      console.log('Project created successfully:', data);
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     const form = document.querySelector('.create-project-form');
-
-//     form.addEventListener('submit', function (event) {
-//         event.preventDefault(); // Prevent form submission
-
-//         if (validateForm()) {
-//             console.log('Form is valid. Submitting...');
-//             form.submit(); // Submit the form if valid
-//         } else {
-//             console.log('Form is invalid. Please correct the errors.');
-//         }
-//     });
-// });
+      // Redirect to the project list or dashboard after successful creation
+      window.location.href = '/dashboard/';
+  } catch (error) {
+      console.error('Error creating project:', error);
+      alert('An error occurred while creating the project. Please try again.');
+  }
+});

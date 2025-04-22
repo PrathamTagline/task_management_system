@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'accounts',
     'core',
     'projects',
+    'tasks',
 ]
 # REST Framework settings
 REST_FRAMEWORK = {
