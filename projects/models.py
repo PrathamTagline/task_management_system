@@ -30,7 +30,6 @@ class Project(models.Model):
     type = models.CharField(max_length=50, choices=PROJECT_TYPE_CHOICES, default='OTHER')
     image = models.ImageField(upload_to=project_image_path, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_projects')
-    assigned_users = models.ManyToManyField(User, related_name='assigned_projects', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -85,23 +84,24 @@ class Project(models.Model):
             super().save(update_fields=['image'])
 
 
-# class ProjectMembership(models.Model):
-#     """
-#     Model representing a user's membership in a project.
-#     """
-#     PART_CHOICES = [
-#         ('FRONTEND', 'Frontend'),
-#         ('BACKEND', 'Backend'),
-#         ('TESTING', 'Testing'),
-#         ('DESIGN', 'Design'),
-#         ('OTHER', 'Other')
-#     ]
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='memberships')
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_memberships')
-#     part = models.CharField(max_length=20, choices=PART_CHOICES)
-#     joined_at = models.DateTimeField(auto_now_add=True)
+class ProjectMembership(models.Model):
+    """
+    Model representing a user's membership in a project with a specific role.
+    """
+    ROLE_CHOICES = [
+        ('ADMIN', 'Admin'),
+        ('MANAGER', 'Manager'),
+        ('DEVELOPER', 'Developer'),
+        ('TESTER', 'Tester'),
+        ('DESIGNER', 'Designer'),
+        ('OTHER', 'Other'),
+    ]
 
-#     def __str__(self):
-#         return f"{self.user.email} - {self.project.name} ({self.part})"
-        
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='memberships')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_memberships')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.project.name} ({self.role})"

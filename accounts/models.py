@@ -18,7 +18,6 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('username', 'admin')
-        extra_fields.setdefault('role', 'ADMIN')
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
@@ -27,11 +26,6 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=20, choices=[
-        ('ADMIN', 'Admin'),
-        ('MANAGER', 'Manager'),
-        ('EMPLOYEE', 'Employee')
-    ])
     profile_image = models.ImageField(upload_to=user_profile_upload_path, null=True, blank=True)
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)

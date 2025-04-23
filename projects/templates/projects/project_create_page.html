@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Project</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: #f4f5f7;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Top navigation bar */
+    .top-nav {
+      background-color: #0052cc;
+      color: white;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-right: 24px;
+    }
+
+    .top-nav-links {
+      display: flex;
+      height: 100%;
+    }
+
+    .top-nav-link {
+      color: white;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .top-nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .top-nav-link.active {
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 -3px 0 white;
+    }
+
+    .top-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-input {
+      padding: 6px 12px;
+      border-radius: 3px;
+      border: none;
+      font-size: 14px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: white;
+      color: #0052cc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    /* Container for sidebar and main content */
+    .content-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background-color: #fafbfc;
+      border-right: 1px solid #dfe1e6;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      color: #42526e;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .nav-item:hover {
+      background-color: #ebecf0;
+    }
+    
+    .nav-item.active {
+      background-color: #deebff;
+      color: #0052cc;
+      font-weight: 500;
+    }
+    
+    .nav-icon {
+      margin-right: 12px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Main content */
+    .main-content {
+      flex: 1;
+      padding: 20px 30px;
+      overflow-y: auto;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #172b4d;
+    }
+    
+    /* Create Project Form */
+    .create-project-form {
+      background-color: white;
+      border-radius: 3px;
+      border: 1px solid #dfe1e6;
+      padding: 24px;
+      max-width: 800px;
+    }
+
+    .form-section {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 8px;
+    }
+
+    .required:after {
+      content: " *";
+      color: #ff5630;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #0052cc;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+      min-height: 120px;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #0052cc;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+      background-color: white;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #0052cc;
+    }
+
+    .project-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .project-type-card {
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .project-type-card:hover {
+      background-color: #f4f5f7;
+    }
+
+    .project-type-card.selected {
+      border-color: #0052cc;
+      background-color: #deebff;
+    }
+
+    .project-type-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 3px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .web-icon {
+      background-color: #0052cc;
+    }
+    
+    .mobile-icon {
+      background-color: #6554c0;
+    }
+    
+    .api-icon {
+      background-color: #00a3bf;
+    }
+    
+    .desktop-icon {
+      background-color: #ff5630;
+    }
+    
+    .other-icon {
+      background-color: #36b37e;
+    }
+
+    .project-type-name {
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 4px;
+    }
+
+    .project-type-desc {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    .image-upload-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border: 2px dashed #dfe1e6;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+
+    .image-upload-container:hover {
+      border-color: #0052cc;
+      background-color: #f4f5f7;
+    }
+
+    .upload-icon {
+      font-size: 32px;
+      color: #6b778c;
+      margin-bottom: 8px;
+    }
+
+    .upload-text {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    .image-preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-preview-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: none;
+    }
+
+    .image-preview-container.active {
+      display: block;
+    }
+
+    .remove-image {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      background-color: #ff5630;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+    }
+
+    .upload-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    #image-upload {
+      display: none;
+    }
+
+    .form-helper {
+      font-size: 12px;
+      color: #6b778c;
+      margin-top: 4px;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 16px;
+      border-top: 1px solid #dfe1e6;
+    }
+
+    .cancel-btn {
+      background: none;
+      border: none;
+      color: #6b778c;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 12px;
+      border-radius: 3px;
+      transition: background-color 0.2s;
+    }
+
+    .cancel-btn:hover {
+      background-color: #f4f5f7;
+    }
+
+    .submit-btn {
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: #0747a6;
+    }
+
+    /* Team member section */
+    .team-member-section {
+      margin-top: 24px;
+    }
+
+    .team-member-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .team-member-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .add-member-btn {
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .team-members-list {
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .team-members-list:empty::after {
+      content: "No team members assigned yet";
+      display: block;
+      padding: 16px;
+      text-align: center;
+      color: #6b778c;
+      font-style: italic;
+    }
+
+    .team-member-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+
+    .team-member-item:last-child {
+      border-bottom: none;
+    }
+
+    .member-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #0052cc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .member-info {
+      flex: 1;
+    }
+
+    .member-name {
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 2px;
+    }
+
+    .member-email {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    .member-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .role-select {
+      padding: 4px 8px;
+      font-size: 14px;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      background-color: white;
+    }
+
+    .remove-member {
+      color: #ff5630;
+      cursor: pointer;
+      font-size: 16px;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(9, 30, 66, 0.54);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: 3px;
+      box-shadow: 0 8px 16px rgba(9, 30, 66, 0.25);
+      width: 500px;
+      max-width: 90%;
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: #6b778c;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #dfe1e6;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .user-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+    }
+
+    .user-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #dfe1e6;
+      cursor: pointer;
+    }
+
+    .user-item:hover {
+      background-color: #f4f5f7;
+    }
+
+    .user-item:last-child {
+      border-bottom: none;
+    }
+
+    .user-item.selected {
+      background-color: #deebff;
+    }
+
+    .user-search {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b778c;
+    }
+
+    .user-search-input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      font-size: 14px;
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+    }
+
+    .user-search-input:focus {
+      outline: none;
+      border-color: #0052cc;
+    }
+
+    .role-selection {
+      margin-top: 20px;
+    }
+
+    .role-selection-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .empty-state {
+      padding: 20px;
+      text-align: center;
+      color: #6b778c;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top navigation bar -->
+  <div class="top-nav">
+    <div class="top-nav-left">
+      <div class="logo">ProjectHub</div>
+      <div class="top-nav-links">
+        <a href="#" class="top-nav-link">Dashboard</a>
+        <a href="#" class="top-nav-link active">Projects</a>
+        <a href="#" class="top-nav-link">Teams</a>
+      </div>
+    </div>
+    <div class="top-nav-right">
+      <input type="text" class="search-input" placeholder="Search...">
+      <button class="icon-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </button>
+      <div class="user-avatar">JD</div>
+    </div>
+  </div>
+
+  <!-- Container for sidebar and main content -->
+  <div class="content-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <a href="#" class="nav-item active">
+        <div class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+        </div>
+        Projects
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        Teams
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+          </svg>
+        </div>
+        Tasks
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+        </div>
+        Messages
+      </a>
+      <a href="#" class="nav-item">
+        <div class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        Help & Support
+      </a>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <h1 class="section-title">Create New Project</h1>
+      
+      <form class="create-project-form" id="project-form">
+        <div class="form-section">
+          <label class="form-label required">Project Title</label>
+          <input type="text" class="form-input" id="project-title" placeholder="Enter project title" required>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">Project Icon</label>
+          <div class="upload-container">
+            <label for="image-upload" class="image-upload-container" id="upload-label">
+              <div class="upload-icon">+</div>
+              <div class="upload-text">Upload Image</div>
+            </label>
+            <div class="image-preview-container" id="preview-container">
+              <div class="remove-image" id="remove-image">×</div>
+              <img id="image-preview" class="image-preview" src="" alt="Preview">
+            </div>
+            <input type="file" id="image-upload" accept="image/*">
+          </div>
+          <div class="form-helper">Recommended: 120x120px, PNG or JPG</div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label required">Project Description</label>
+          <textarea class="form-textarea" id="project-description" placeholder="Describe your project..." required></textarea>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label required">Project Type</label>
+          <div class="project-type-grid">
+            <div class="project-type-card" data-type="web" onclick="selectProjectType(this)">
+              <div class="project-type-icon web-icon">W</div>
+              <div class="project-type-name">Web</div>
+              <div class="project-type-desc">Web applications and websites</div>
+            </div>
+            <div class="project-type-card" data-type="mobile" onclick="selectProjectType(this)">
+              <div class="project-type-icon mobile-icon">M</div>
+              <div class="project-type-name">Mobile</div>
+              <div class="project-type-desc">iOS, Android and cross-platform apps</div>
+            </div>
+            <div class="project-type-card" data-type="api" onclick="selectProjectType(this)">
+              <div class="project-type-icon api-icon">A</div>
+              <div class="project-type-name">API</div>
+              <div class="project-type-desc">RESTful, GraphQL, and microservices</div>
+            </div>
+            <div class="project-type-card" data-type="desktop" onclick="selectProjectType(this)">
+              <div class="project-type-icon desktop-icon">D</div>
+              <div class="project-type-name">Desktop</div>
+              <div class="project-type-desc">Windows, macOS, and Linux applications</div>
+            </div>
+            <div class="project-type-card" data-type="other" onclick="selectProjectType(this)">
+              <div class="project-type-icon other-icon">O</div>
+              <div class="project-type-name">Other</div>
+              <div class="project-type-desc">Any other type of project</div>
+            </div>
+          </div>
+          <input type="hidden" id="project-type" name="project-type" required>
+        </div>
+
+        <div class="form-section">
+          <div class="team-member-header">
+            <div class="team-member-title">Team Members</div>
+            <button type="button" class="add-member-btn" id="add-member-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Member
+            </button>
+          </div>
+          <div class="team-members-list" id="team-members-list">
+            <!-- Team members will be added here -->
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="cancel-btn">Cancel</button>
+          <button type="submit" class="submit-btn">Create Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Team Member Modal -->
+  <div class="modal-backdrop" id="add-member-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Add Team Member</div>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="user-search">
+          <div class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input type="text" class="user-search-input" id="user-search" placeholder="Search for users...">
+        </div>
+        <div class="user-list" id="user-list">
+          <!-- User list will be populated dynamically -->
+          <div class="user-item" data-id="1" data-name="John Doe" data-email="john.doe@example.com" data-avatar="JD">
+            <div class="member-avatar">JD</div>
+            <div class="member-info">
+              <div class="member-name">John Doe</div>
+              <div class="member-email">john.doe@example.com</div>
+            </div>
+          </div>
+          <div class="user-item" data-id="2" data-name="Jane Smith" data-email="jane.smith@example.com" data-avatar="JS">
+            <div class="member-avatar">JS</div>
+            <div class="member-info">
+              <div class="member-name">Jane Smith</div>
+              <div class="member-email">jane.smith@example.com</div>
+            </div>
+          </div>
+          <div class="user-item" data-id="3" data-name="Bob Johnson" data-email="bob.johnson@example.com" data-avatar="BJ">
+            <div class="member-avatar">BJ</div>
+            <div class="member-info">
+
+
+
+
+
+                <div class="member-name">Bob Johnson</div>
+              <div class="member-email">bob.johnson@example.com</div>
+            </div>
+          </div>
+          <div class="user-item" data-id="4" data-name="Emily Chen" data-email="emily.chen@example.com" data-avatar="EC">
+            <div class="member-avatar">EC</div>
+            <div class="member-info">
+              <div class="member-name">Emily Chen</div>
+              <div class="member-email">emily.chen@example.com</div>
+            </div>
+          </div>
+          <div class="user-item" data-id="5" data-name="Michael Brown" data-email="michael.brown@example.com" data-avatar="MB">
+            <div class="member-avatar">MB</div>
+            <div class="member-info">
+              <div class="member-name">Michael Brown</div>
+              <div class="member-email">michael.brown@example.com</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="role-selection">
+          <label class="role-selection-label">Select Role</label>
+          <select class="form-select" id="role-select">
+            <option value="developer">Developer</option>
+            <option value="designer">Designer</option>
+            <option value="project_manager">Project Manager</option>
+            <option value="qa">QA Engineer</option>
+            <option value="stakeholder">Stakeholder</option>
+            <option value="viewer">Viewer</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" id="cancel-add-member">Cancel</button>
+        <button class="submit-btn" id="confirm-add-member" disabled>Add to Project</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables to keep track of selected users
+    let selectedUser = null;
+    let selectedUserItem = null;
+    let teamMembers = [];
+
+    // DOM Elements
+    const addMemberBtn = document.getElementById('add-member-btn');
+    const addMemberModal = document.getElementById('add-member-modal');
+    const modalClose = document.getElementById('modal-close');
+    const cancelAddMember = document.getElementById('cancel-add-member');
+    const confirmAddMember = document.getElementById('confirm-add-member');
+    const userItems = document.querySelectorAll('.user-item');
+    const userSearchInput = document.getElementById('user-search');
+    const teamMembersList = document.getElementById('team-members-list');
+    const userList = document.getElementById('user-list');
+    const roleSelect = document.getElementById('role-select');
+
+    // Project type selection
+    function selectProjectType(card) {
+      // Remove selected class from all cards
+      document.querySelectorAll('.project-type-card').forEach(item => {
+        item.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked card
+      card.classList.add('selected');
+      
+      // Update hidden input value
+      document.getElementById('project-type').value = card.dataset.type;
+    }
+
+    // Image upload preview
+    const imageUpload = document.getElementById('image-upload');
+    const imagePreview = document.getElementById('image-preview');
+    const previewContainer = document.getElementById('preview-container');
+    const removeImage = document.getElementById('remove-image');
+    const uploadLabel = document.getElementById('upload-label');
+
+    imageUpload.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          previewContainer.classList.add('active');
+          uploadLabel.style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    removeImage.addEventListener('click', function(e) {
+      e.preventDefault();
+      imageUpload.value = '';
+      imagePreview.src = '';
+      previewContainer.classList.remove('active');
+      uploadLabel.style.display = 'flex';
+    });
+
+    // Open modal when "Add Member" button is clicked
+    addMemberBtn.addEventListener('click', function() {
+      addMemberModal.classList.add('active');
+      // Reset selection
+      if (selectedUserItem) {
+        selectedUserItem.classList.remove('selected');
+      }
+      selectedUser = null;
+      selectedUserItem = null;
+      confirmAddMember.disabled = true;
+      
+      // Clear search input
+      userSearchInput.value = '';
+      
+      // Show all user items
+      userItems.forEach(item => {
+        item.style.display = 'flex';
+      });
+    });
+
+    // Close modal when close button is clicked
+    modalClose.addEventListener('click', function() {
+      addMemberModal.classList.remove('active');
+    });
+
+    // Close modal when cancel button is clicked
+    cancelAddMember.addEventListener('click', function() {
+      addMemberModal.classList.remove('active');
+    });
+
+    // Close modal when clicking outside of it
+    addMemberModal.addEventListener('click', function(e) {
+      if (e.target === addMemberModal) {
+        addMemberModal.classList.remove('active');
+      }
+    });
+
+    // User search functionality
+    userSearchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      
+      userItems.forEach(item => {
+        const name = item.querySelector('.member-name').textContent.toLowerCase();
+        const email = item.querySelector('.member-email').textContent.toLowerCase();
+        
+        if (name.includes(searchTerm) || email.includes(searchTerm)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // User selection in modal
+    userItems.forEach(item => {
+      item.addEventListener('click', function() {
+        // Remove selected class from previously selected user
+        if (selectedUserItem) {
+          selectedUserItem.classList.remove('selected');
+        }
+        
+        // Add selected class to clicked user
+        this.classList.add('selected');
+        
+        // Store selected user data
+        selectedUser = {
+          id: this.dataset.id,
+          name: this.dataset.name,
+          email: this.dataset.email,
+          avatar: this.dataset.avatar
+        };
+        
+        selectedUserItem = this;
+        
+        // Enable add button
+        confirmAddMember.disabled = false;
+      });
+    });
+
+    // Confirm add member
+    confirmAddMember.addEventListener('click', function() {
+      if (selectedUser) {
+        // Check if user is already added
+        const isDuplicate = teamMembers.some(member => member.id === selectedUser.id);
+        
+        if (!isDuplicate) {
+          // Add selected role to user data
+          selectedUser.role = roleSelect.value;
+          
+          // Add user to team members array
+          teamMembers.push(selectedUser);
+          
+          // Create and add team member item to the list
+          const memberItem = createTeamMemberItem(selectedUser);
+          teamMembersList.appendChild(memberItem);
+        }
+        
+        // Close modal
+        addMemberModal.classList.remove('active');
+      }
+    });
+
+    // Create team member item element
+    function createTeamMemberItem(user) {
+      const memberItem = document.createElement('div');
+      memberItem.className = 'team-member-item';
+      memberItem.dataset.id = user.id;
+      
+      const memberAvatar = document.createElement('div');
+      memberAvatar.className = 'member-avatar';
+      memberAvatar.textContent = user.avatar;
+      
+      const memberInfo = document.createElement('div');
+      memberInfo.className = 'member-info';
+      
+      const memberName = document.createElement('div');
+      memberName.className = 'member-name';
+      memberName.textContent = user.name;
+      
+      const memberEmail = document.createElement('div');
+      memberEmail.className = 'member-email';
+      memberEmail.textContent = user.email;
+      
+      memberInfo.appendChild(memberName);
+      memberInfo.appendChild(memberEmail);
+      
+      const memberControls = document.createElement('div');
+      memberControls.className = 'member-controls';
+      
+      const roleSelect = document.createElement('select');
+      roleSelect.className = 'role-select';
+      
+      const roles = [
+        { value: 'developer', text: 'Developer' },
+        { value: 'designer', text: 'Designer' },
+        { value: 'project_manager', text: 'Project Manager' },
+        { value: 'qa', text: 'QA Engineer' },
+        { value: 'stakeholder', text: 'Stakeholder' },
+        { value: 'viewer', text: 'Viewer' }
+      ];
+      
+      roles.forEach(role => {
+        const option = document.createElement('option');
+        option.value = role.value;
+        option.textContent = role.text;
+        
+        if (role.value === user.role) {
+          option.selected = true;
+        }
+        
+        roleSelect.appendChild(option);
+      });
+      
+      // Role change handler
+      roleSelect.addEventListener('change', function() {
+        const memberId = memberItem.dataset.id;
+        const member = teamMembers.find(m => m.id === memberId);
+        
+        if (member) {
+          member.role = this.value;
+        }
+      });
+      
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-member';
+      removeButton.innerHTML = '&times;';
+      
+      // Remove member handler
+      removeButton.addEventListener('click', function() {
+        const memberId = memberItem.dataset.id;
+        
+        // Remove from array
+        teamMembers = teamMembers.filter(member => member.id !== memberId);
+        
+        // Remove from DOM
+        memberItem.remove();
+      });
+      
+      memberControls.appendChild(roleSelect);
+      memberControls.appendChild(removeButton);
+      
+      memberItem.appendChild(memberAvatar);
+      memberItem.appendChild(memberInfo);
+      memberItem.appendChild(memberControls);
+      
+      return memberItem;
+    }
+
+    // Form submission handler
+    const projectForm = document.getElementById('project-form');
+    projectForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get form values
+      const title = document.getElementById('project-title').value;
+      const description = document.getElementById('project-description').value;
+      const projectType = document.getElementById('project-type').value;
+      
+      // Create project data object
+      const projectData = {
+        title,
+        description,
+        type: projectType,
+        teamMembers
+      };
+      
+      // Handle image if selected
+      if (imageUpload.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          projectData.icon = e.target.result;
+          // Now you can send the project data to your backend
+          console.log('Project Data:', projectData);
+          alert('Project created successfully!');
+        };
+        reader.readAsDataURL(imageUpload.files[0]);
+      } else {
+        // No image selected, just send the project data
+        console.log('Project Data:', projectData);
+        alert('Project created successfully!');
+      }
+    });
+  </script>
+</body>
+</html>

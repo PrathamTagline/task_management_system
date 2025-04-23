@@ -5,7 +5,775 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KAN Board</title>
   <style>
+    /* Additional CSS for new features */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
     
+    body {
+      background-color: #f4f5f7;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Breadcrumb navigation */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      padding: 16px 24px;
+      font-size: 14px;
+      color: #42526e;
+    }
+
+    .breadcrumb a {
+      color: #42526e;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb .separator {
+      margin: 0 8px;
+      color: #6b778c;
+    }
+
+    /* Board header */
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px 16px 24px;
+    }
+
+    .board-title {
+      font-size: 24px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 3px;
+      border: none;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #42526e;
+    }
+
+    .header-button:hover {
+      background-color: rgba(9, 30, 66, 0.08);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 24px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-input {
+      width: 200px;
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #4c9aff;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #dfe1e6;
+      color: #42526e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .avatar.blue {
+      background-color: #0052cc;
+      color: white;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .group-dropdown {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #42526e;
+    }
+
+    .group-label {
+      margin-right: 8px;
+    }
+
+    .dropdown-button {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      background-color: #f4f5f7;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .dropdown-button:hover {
+      background-color: #ebecf0;
+    }
+
+    .dropdown-arrow {
+      margin-left: 8px;
+    }
+
+    .toolbar-button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      background-color: #f4f5f7;
+      font-size: 14px;
+      cursor: pointer;
+      color: #42526e;
+    }
+
+    .toolbar-button:hover {
+      background-color: #ebecf0;
+    }
+
+    /* Board content */
+    .board-content {
+      display: flex;
+      flex: 1;
+      padding: 24px;
+      gap: 16px;
+      overflow-x: auto;
+    }
+
+    .board-column {
+      flex: 0 0 280px;
+      max-width: 280px;
+      background-color: #f4f5f7;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .column-header {
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #42526e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #dfe1e6;
+    }
+
+    .column-count {
+      background-color: rgba(9, 30, 66, 0.08);
+      border-radius: 3px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+
+    .column-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b778c;
+    }
+
+    .tasks-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .task-card {
+      background-color: white;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(9, 30, 66, 0.25);
+      margin-bottom: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .task-card:hover {
+      background-color: #fafbfc;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 8px;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .task-id {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    .task-checkbox {
+      width: 14px;
+      height: 14px;
+      border: 1px solid #dfe1e6;
+      border-radius: 2px;
+      display: inline-block;
+      position: relative;
+      margin-right: 4px;
+      background-color: #0052cc;
+    }
+
+    .task-checkbox::after {
+      content: "";
+      position: absolute;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      top: 1px;
+      left: 4px;
+      transform: rotate(45deg);
+    }
+
+    .add-issue {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      gap: 8px;
+      color: #6b778c;
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .add-issue:hover {
+      color: #172b4d;
+    }
+
+    .add-column {
+      flex: 0 0 280px;
+      max-width: 280px;
+      height: 40px;
+      border-radius: 3px;
+      background-color: rgba(9, 30, 66, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .add-column:hover {
+      background-color: rgba(9, 30, 66, 0.08);
+    }
+
+    .add-icon {
+      font-size: 20px;
+      color: #6b778c;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(9, 30, 66, 0.54);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      display: none;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: 3px;
+      box-shadow: 0 8px 16px rgba(9, 30, 66, 0.25);
+      width: 600px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: #6b778c;
+    }
+
+    .modal-content {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #6b778c;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 2px solid #dfe1e6;
+      border-radius: 3px;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #4c9aff;
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #dfe1e6;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: #0052cc;
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: #f4f5f7;
+      border: 1px solid #dfe1e6;
+      color: #42526e;
+    }
+
+    .btn-primary:hover {
+      background-color: #0747a6;
+    }
+
+    .btn-secondary:hover {
+      background-color: #ebecf0;
+    }
+
+    /* User Profile Modal */
+    .user-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #0052cc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .user-name {
+      font-size: 20px;
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 8px;
+    }
+
+    .user-email {
+      font-size: 14px;
+      color: #6b778c;
+      margin-bottom: 16px;
+    }
+
+    .user-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    /* Add People Modal */
+    .add-people-modal .modal-content {
+      padding: 0;
+    }
+
+    .search-bar {
+      padding: 16px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+
+    .people-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .person-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #dfe1e6;
+      cursor: pointer;
+    }
+
+    .person-item:hover {
+      background-color: #f4f5f7;
+    }
+
+    .person-info {
+      flex: 1;
+      margin-left: 12px;
+    }
+
+    .person-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .person-email {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    /* Task Detail Styles */
+    .task-detail-header {
+      margin-bottom: 24px;
+    }
+
+    .task-detail-id {
+      font-size: 14px;
+      color: #6b778c;
+      margin-bottom: 8px;
+    }
+
+    .task-detail-title {
+      font-size: 24px;
+      font-weight: 500;
+      color: #172b4d;
+      margin-bottom: 16px;
+    }
+
+    .task-detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: #6b778c;
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-size: 14px;
+      color: #172b4d;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dropdown {
+      padding: 4px 8px;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .status-dropdown:focus {
+      outline: none;
+      border-color: #4c9aff;
+    }
+
+    .task-description {
+      font-size: 14px;
+      color: #172b4d;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .task-comments {
+      margin-top: 24px;
+    }
+
+    .comment-form {
+      margin-bottom: 16px;
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .comment {
+      display: flex;
+      gap: 12px;
+    }
+
+    .comment-content {
+      flex: 1;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .comment-author {
+      font-size: 14px;
+      font-weight: 500;
+      color: #172b4d;
+    }
+
+    .comment-time {
+      font-size: 12px;
+      color: #6b778c;
+    }
+
+    .comment-text {
+      font-size: 14px;
+      color: #172b4d;
+      line-height: 1.5;
+    }
+
+    .todo-status {
+      background-color: #dfe1e6;
+      color: #42526e;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    .in-progress-status {
+      background-color: #0052cc;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    .done-status {
+      background-color: #36B37E;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    /* Delete Project Button in Header */
+    .delete-project-btn {
+      margin-left: 8px;
+      padding: 6px 12px;
+      background-color: #FF5630;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .delete-project-btn:hover {
+      background-color: #DE350B;
+    }
+    
+    /* Delete Task Option in Task Details */
+    .task-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      margin-bottom: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #dfe1e6;
+    }
+    
+    .delete-task-btn {
+      padding: 6px 12px;
+      background-color: #FF5630;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .delete-task-btn:hover {
+      background-color: #DE350B;
+    }
+    
+    /* Role Selection in Add People Modal */
+    .role-selection {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+    }
+    
+    .role-dropdown {
+      padding: 4px 8px;
+      border: 1px solid #dfe1e6;
+      border-radius: 3px;
+      font-size: 12px;
+      background-color: #f4f5f7;
+    }
+    
+    .role-label {
+      color: #6b778c;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    
+    /* Checkbox for people selection */
+    .person-checkbox {
+      margin-right: 12px;
+    }
+    
+    /* Delete confirmation modal */
+    .delete-confirm-modal .modal-content {
+      text-align: center;
+      padding: 24px;
+    }
+    
+    .delete-confirm-modal .warning-icon {
+      color: #FF5630;
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .delete-confirm-modal p {
+      margin-bottom: 24px;
+      color: #172b4d;
+    }
+    
+    .delete-confirm-modal .btn-danger {
+      background-color: #FF5630;
+      color: white;
+    }
+    
+    .delete-confirm-modal .btn-danger:hover {
+      background-color: #DE350B;
+    }
   </style>
 </head>
 <body>
@@ -54,16 +822,25 @@
           <circle cx="5" cy="12" r="1"></circle>
         </svg>
       </button>
+      <!-- Add Delete Project Button -->
+      <button class="delete-project-btn" id="delete-project-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        Delete Project
+      </button>
     </div>
   </div>
 
-  <!-- Toolbar -->
-  <div class="toolbar">
+  <!-- Rest of the existing content remains the same until task-detail-modal -->
+   <!-- Toolbar -->
+   <div class="toolbar">
     <div class="toolbar-left">
       <input type="text" class="search-input" placeholder="Search">
-      <div class="avatar">JP</div>
-      <div class="avatar blue">PP</div>
-      <button class="header-button">
+      <div class="avatar" id="user-jp" title="View John's Profile">JP</div>
+      <div class="avatar blue" id="user-pp" title="View Paul's Profile">PP</div>
+      <button class="header-button" id="add-people-btn" title="Add People">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
@@ -101,12 +878,12 @@
   <!-- Board content -->
   <div class="board-content">
     <!-- To Do Column -->
-    <div class="board-column">
+    <div class="board-column" id="todo-column">
       <div class="column-header">
-        <span>TO DO <span class="column-count">2</span></span>
+        <span>TO DO <span class="column-count" id="todo-count">2</span></span>
       </div>
-      <div class="tasks-container">
-        <div class="task-card">
+      <div class="tasks-container" id="todo-tasks">
+        <div class="task-card" data-task-id="KAN-1">
           <div class="task-title">TASK 1</div>
           <div class="task-meta">
             <div class="task-id">
@@ -118,7 +895,7 @@
             </div>
           </div>
         </div>
-        <div class="task-card">
+        <div class="task-card" data-task-id="KAN-2">
           <div class="task-title">TASK 2</div>
           <div class="task-meta">
             <div class="task-id">
@@ -130,7 +907,7 @@
             </div>
           </div>
         </div>
-        <div class="add-issue">
+        <div class="add-issue" id="add-todo-task">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -141,12 +918,12 @@
     </div>
 
     <!-- In Progress Column -->
-    <div class="board-column">
+    <div class="board-column" id="in-progress-column">
       <div class="column-header">
-        <span>IN PROGRESS <span class="column-count">1</span></span>
+        <span>IN PROGRESS <span class="column-count" id="progress-count">1</span></span>
       </div>
-      <div class="tasks-container">
-        <div class="task-card">
+      <div class="tasks-container" id="progress-tasks">
+        <div class="task-card" data-task-id="KAN-3">
           <div class="task-title">TASK 3</div>
           <div class="task-meta">
             <div class="task-id">
@@ -158,32 +935,730 @@
             </div>
           </div>
         </div>
+        <div class="add-issue" id="add-progress-task">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Create issue
+        </div>
       </div>
     </div>
 
     <!-- Done Column -->
-    <div class="board-column">
+    <div class="board-column" id="done-column">
       <div class="column-header">
-        <span>DONE 
+        <span>DONE <span class="column-count" id="done-count">0</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px; color: #36B37E;">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </span>
       </div>
-      <div class="tasks-container">
-        <!-- Empty Done column -->
+      <div class="tasks-container" id="done-tasks">
+        <div class="add-issue" id="add-done-task">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Create issue
+        </div>
       </div>
     </div>
 
     <!-- Add Column Button -->
-    <div class="add-column">
-      <span class="add-icon">+</span>
+    <div class="add-column" id="add-column-btn">
+      <span class="add-icon">+</span> Add column
+    </div>
+  </div>
+
+  <!-- Create Issue Modal -->
+  <div class="modal-overlay" id="create-issue-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Create issue</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="form-group">
+          <label for="issue-title" class="form-label">Issue title</label>
+          <input type="text" id="issue-title" class="form-control" placeholder="Enter issue title">
+        </div>
+        <div class="form-group">
+          <label for="issue-description" class="form-label">Description</label>
+          <textarea id="issue-description" class="form-control" placeholder="Enter issue description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="issue-status" class="form-label">Status</label>
+          <select id="issue-status" class="form-control">
+            <option value="todo">To Do</option>
+            <option value="progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="issue-assignee" class="form-label">Assignee</label>
+          <select id="issue-assignee" class="form-control">
+            <option value="jp">John Doe (JP)</option>
+            <option value="pp">Paul Smith (PP)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-create-issue">Cancel</button>
+        <button class="btn btn-primary" id="confirm-create-issue">Create issue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile Modal -->
+  <div class="modal-overlay" id="user-profile-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">User Profile</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="user-profile">
+          <div class="user-avatar" id="profile-avatar">JP</div>
+          <h3 class="user-name" id="profile-name">John Doe</h3>
+          <p class="user-email" id="profile-email">john.doe@example.com</p>
+          <div class="user-stats">
+            <div class="stat-item">
+              <div class="stat-value">2</div>
+              <div class="stat-label">To Do</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">1</div>
+              <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">0</div>
+              <div class="stat-label">Done</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add People Modal -->
+  <div class="modal-overlay" id="add-people-modal">
+    <div class="modal add-people-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Add people</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="search-bar">
+          <input type="text" class="form-control" placeholder="Search by name or email">
+        </div>
+        <div class="people-list">
+          <div class="person-item">
+            <div class="avatar">MS</div>
+            <div class="person-info">
+              <div class="person-name">Mark Smith</div>
+              <div class="person-email">mark.smith@example.com</div>
+            </div>
+          </div>
+          <div class="person-item">
+            <div class="avatar">JD</div>
+            <div class="person-info">
+              <div class="person-name">Jane Davis</div>
+              <div class="person-email">jane.davis@example.com</div>
+            </div>
+          </div>
+          <div class="person-item">
+            <div class="avatar">RB</div>
+            <div class="person-info">
+              <div class="person-name">Robert Brown</div>
+              <div class="person-email">robert.brown@example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Add selected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Detail Modal -->
+  <div class="modal-overlay" id="task-detail-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Task Details</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="task-detail-header">
+          <div class="task-detail-id">KAN-1</div>
+          <h2 class="task-detail-title" id="detail-title">TASK 1</h2>
+        </div>
+        <div class="task-detail-meta">
+          <div class="meta-item">
+            <div class="meta-label">Assignee</div>
+            <div class="meta-value">
+              <div class="avatar" style="width: 24px; height: 24px; font-size: 12px;">JP</div>
+              John Doe
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Status</div>
+            <div class="meta-value">
+              <select class="status-dropdown">
+                <option value="todo">To Do</option>
+                <option value="progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Created</div>
+            <div class="meta-value">April 10, 2025</div>
+          </div>
+        </div>
+        <div class="task-description">
+          <h3>Description</h3>
+          <p id="detail-description">This is a detailed description of the task. It outlines what needs to be accomplished and why it's important for the project.</p>
+        </div>
+        <div class="task-comments">
+          <h3>Comments</h3>
+          <div class="comment-form">
+            <div class="form-group">
+              <textarea class="form-control" placeholder="Add a comment..."></textarea>
+            </div>
+            <button class="btn btn-primary">Add comment</button>
+          </div>
+          <div class="comment-list">
+            <div class="comment">
+              <div class="avatar" style="width: 32px; height: 32px;">PP</div>
+              <div class="comment-content">
+                <div class="comment-header">
+                  <span class="comment-author">Paul Smith</span>
+                  <span class="comment-time">2 days ago</span>
+                </div>
+                <div class="comment-text">
+                  I think we should consider adding more details to this task.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Task Detail Modal (Modified to include delete button) -->
+  <div class="modal-overlay" id="task-detail-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Task Details</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="task-detail-header">
+          <div class="task-detail-id">KAN-1</div>
+          <h2 class="task-detail-title" id="detail-title">TASK 1</h2>
+        </div>
+        <div class="task-detail-meta">
+          <div class="meta-item">
+            <div class="meta-label">Assignee</div>
+            <div class="meta-value">
+              <div class="avatar" style="width: 24px; height: 24px; font-size: 12px;">JP</div>
+              John Doe
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Status</div>
+            <div class="meta-value">
+              <select class="status-dropdown">
+                <option value="todo">To Do</option>
+                <option value="progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Created</div>
+            <div class="meta-value">April 10, 2025</div>
+          </div>
+        </div>
+        <div class="task-description">
+          <h3>Description</h3>
+          <p id="detail-description">This is a detailed description of the task. It outlines what needs to be accomplished and why it's important for the project.</p>
+        </div>
+        
+        <!-- Add task actions with delete button -->
+        <div class="task-actions">
+          <button class="delete-task-btn" id="delete-task-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Delete Task
+          </button>
+        </div>
+        
+        <div class="task-comments">
+          <h3>Comments</h3>
+          <div class="comment-form">
+            <div class="form-group">
+              <textarea class="form-control" placeholder="Add a comment..."></textarea>
+            </div>
+            <button class="btn btn-primary">Add comment</button>
+          </div>
+          <div class="comment-list">
+            <div class="comment">
+              <div class="avatar" style="width: 32px; height: 32px;">PP</div>
+              <div class="comment-content">
+                <div class="comment-header">
+                  <span class="comment-author">Paul Smith</span>
+                  <span class="comment-time">2 days ago</span>
+                </div>
+                <div class="comment-text">
+                  I think we should consider adding more details to this task.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modified Add People Modal with role selection -->
+  <div class="modal-overlay" id="add-people-modal">
+    <div class="modal add-people-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Add people</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="search-bar">
+          <input type="text" class="form-control" placeholder="Search by name or email">
+        </div>
+        <div class="people-list">
+          <div class="person-item">
+            <input type="checkbox" class="person-checkbox">
+            <div class="avatar">MS</div>
+            <div class="person-info">
+              <div class="person-name">Mark Smith</div>
+              <div class="person-email">mark.smith@example.com</div>
+            </div>
+            <div class="role-selection">
+              <select class="role-dropdown">
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+                <option value="viewer">Viewer</option>
+              </select>
+              <span class="role-label">Role</span>
+            </div>
+          </div>
+          <div class="person-item">
+            <input type="checkbox" class="person-checkbox">
+            <div class="avatar">JD</div>
+            <div class="person-info">
+              <div class="person-name">Jane Davis</div>
+              <div class="person-email">jane.davis@example.com</div>
+            </div>
+            <div class="role-selection">
+              <select class="role-dropdown">
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+                <option value="viewer">Viewer</option>
+              </select>
+              <span class="role-label">Role</span>
+            </div>
+          </div>
+          <div class="person-item">
+            <input type="checkbox" class="person-checkbox">
+            <div class="avatar">RB</div>
+            <div class="person-info">
+              <div class="person-name">Robert Brown</div>
+              <div class="person-email">robert.brown@example.com</div>
+            </div>
+            <div class="role-selection">
+              <select class="role-dropdown">
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+                <option value="viewer">Viewer</option>
+              </select>
+              <span class="role-label">Role</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-add-people">Cancel</button>
+        <button class="btn btn-primary" id="confirm-add-people">Add selected</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Delete Project Confirmation Modal -->
+  <div class="modal-overlay" id="delete-project-modal">
+    <div class="modal delete-confirm-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Project</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="warning-icon">⚠️</div>
+        <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-delete-project">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-project">Delete Project</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Delete Task Confirmation Modal -->
+  <div class="modal-overlay" id="delete-task-modal">
+    <div class="modal delete-confirm-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Task</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="warning-icon">⚠️</div>
+        <p>Are you sure you want to delete this task? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-delete-task">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-task">Delete Task</button>
+      </div>
     </div>
   </div>
 
   <script>
-    // We could add drag and drop functionality here
-    // along with other interactive elements
+    // Existing script code...
+     // Toggle modals
+     document.querySelectorAll('.modal-close').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+          modal.style.display = 'none';
+        });
+      });
+    });
+
+    // User profile modal
+    document.getElementById('user-jp').addEventListener('click', () => {
+      const modal = document.getElementById('user-profile-modal');
+      document.getElementById('profile-avatar').textContent = 'JP';
+      document.getElementById('profile-avatar').style.backgroundColor = '#dfe1e6';
+      document.getElementById('profile-avatar').style.color = '#42526e';
+      document.getElementById('profile-name').textContent = 'John Doe';
+      document.getElementById('profile-email').textContent = 'john.doe@example.com';
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('user-pp').addEventListener('click', () => {
+      const modal = document.getElementById('user-profile-modal');
+      document.getElementById('profile-avatar').textContent = 'PP';
+      document.getElementById('profile-avatar').style.backgroundColor = '#0052cc';
+      document.getElementById('profile-avatar').style.color = 'white';
+      document.getElementById('profile-name').textContent = 'Paul Smith';
+      document.getElementById('profile-email').textContent = 'paul.smith@example.com';
+      modal.style.display = 'flex';
+    });
+
+    // Add people modal
+    document.getElementById('add-people-btn').addEventListener('click', () => {
+      document.getElementById('add-people-modal').style.display = 'flex';
+    });
+
+    // Create issue modals
+    document.getElementById('add-todo-task').addEventListener('click', () => {
+      const modal = document.getElementById('create-issue-modal');
+      document.getElementById('issue-status').value = 'todo';
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('add-progress-task').addEventListener('click', () => {
+      const modal = document.getElementById('create-issue-modal');
+      document.getElementById('issue-status').value = 'progress';
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('add-done-task').addEventListener('click', () => {
+      const modal = document.getElementById('create-issue-modal');
+      document.getElementById('issue-status').value = 'done';
+      modal.style.display = 'flex';
+    });
+
+    // Task detail modal
+    document.querySelectorAll('.task-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const taskId = card.getAttribute('data-task-id');
+        const taskTitle = card.querySelector('.task-title').textContent;
+        
+        const modal = document.getElementById('task-detail-modal');
+        modal.querySelector('.task-detail-id').textContent = taskId;
+        modal.querySelector('#detail-title').textContent = taskTitle;
+        
+        // Set the correct status in the dropdown
+        let status = 'todo';
+        if (card.closest('#progress-tasks')) {
+          status = 'progress';
+        } else if (card.closest('#done-tasks')) {
+          status = 'done';
+        }
+        modal.querySelector('.status-dropdown').value = status;
+        
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Cancel create issue
+    document.getElementById('cancel-create-issue').addEventListener('click', () => {
+      document.getElementById('create-issue-modal').style.display = 'none';
+    });
+
+    // Create new issue
+    document.getElementById('confirm-create-issue').addEventListener('click', () => {
+      const title = document.getElementById('issue-title').value;
+      const status = document.getElementById('issue-status').value;
+      const assignee = document.getElementById('issue-assignee').value;
+      
+      if (title.trim() === '') {
+        alert('Please enter a title for the issue');
+        return;
+      }
+      
+      // Get the next task ID
+      const allTasks = document.querySelectorAll('.task-card');
+      const nextId = allTasks.length + 1;
+      const taskId = `KAN-${nextId}`;
+      
+      // Create the new task card
+      const newTask = document.createElement('div');
+      newTask.className = 'task-card';
+      newTask.setAttribute('data-task-id', taskId);
+      
+      const assigneeInitials = assignee === 'jp' ? 'JP' : 'PP';
+      const assigneeClass = assignee === 'jp' ? '' : 'blue';
+      
+      newTask.innerHTML = `
+        <div class="task-title">${title}</div>
+        <div class="task-meta">
+          <div class="task-id">
+            <span class="task-checkbox"></span>
+            ${taskId}
+          </div>
+          <div class="task-assignee">
+            <div class="avatar ${assigneeClass}" style="width: 24px; height: 24px; font-size: 12px;">${assigneeInitials}</div>
+          </div>
+        </div>
+      `;
+      
+      // Add the task to the appropriate column
+      let targetColumn;
+      if (status === 'todo') {
+        targetColumn = document.getElementById('todo-tasks');
+        const count = document.getElementById('todo-count');
+        count.textContent = parseInt(count.textContent) + 1;
+      } else if (status === 'progress') {
+        targetColumn = document.getElementById('progress-tasks');
+        const count = document.getElementById('progress-count');
+        count.textContent = parseInt(count.textContent) + 1;
+      } else {
+        targetColumn = document.getElementById('done-tasks');
+        const count = document.getElementById('done-count');
+        count.textContent = parseInt(count.textContent) + 1;
+      }
+      
+      // Insert the new task before the "add issue" button
+      const addIssueBtn = targetColumn.querySelector('.add-issue');
+      targetColumn.insertBefore(newTask, addIssueBtn);
+      
+      // Add click event to the new task
+      newTask.addEventListener('click', () => {
+        const modal = document.getElementById('task-detail-modal');
+        modal.querySelector('.task-detail-id').textContent = taskId;
+        modal.querySelector('#detail-title').textContent = title;
+        modal.querySelector('.status-dropdown').value = status;
+        modal.style.display = 'flex';
+      });
+      
+      // Clear the form and hide the modal
+      document.getElementById('issue-title').value = '';
+      document.getElementById('issue-description').value = '';
+      document.getElementById('create-issue-modal').style.display = 'none';
+    });
+
+    // Make the board columns support drag and drop
+    const columns = document.querySelectorAll('.tasks-container');
+    
+    // Basic drag and drop functionality
+    let draggedItem = null;
+    
+    document.addEventListener('dragstart', function(e) {
+      if (e.target.classList.contains('task-card')) {
+        draggedItem = e.target;
+        setTimeout(() => {
+          e.target.style.opacity = '0.5';
+        }, 0);
+      }
+    });
+    
+    document.addEventListener('dragend', function(e) {
+      if (e.target.classList.contains('task-card')) {
+        e.target.style.opacity = '1';
+        draggedItem = null;
+      }
+    });
+    
+    columns.forEach(column => {
+      // Make task cards draggable
+      column.querySelectorAll('.task-card').forEach(card => {
+        card.setAttribute('draggable', 'true');
+      });
+      
+      // Handle drop events
+      column.addEventListener('dragover', function(e) {
+        e.preventDefault();
+      });
+      
+      column.addEventListener('drop', function(e) {
+        e.preventDefault();
+        if (draggedItem) {
+          // Update task counts
+          const fromColumn = draggedItem.parentElement;
+          const toColumn = this;
+          
+          if (fromColumn !== toColumn) {
+            // Decrease count in the source column
+            let fromCountEl;
+            if (fromColumn.id === 'todo-tasks') {
+              fromCountEl = document.getElementById('todo-count');
+            } else if (fromColumn.id === 'progress-tasks') {
+              fromCountEl = document.getElementById('progress-count');
+            } else {
+              fromCountEl = document.getElementById('done-count');
+            }
+            fromCountEl.textContent = parseInt(fromCountEl.textContent) - 1;
+            
+            // Increase count in the target column
+            let toCountEl;
+            if (toColumn.id === 'todo-tasks') {
+              toCountEl = document.getElementById('todo-count');
+            } else if (toColumn.id === 'progress-tasks') {
+              toCountEl = document.getElementById('progress-count');
+            } else {
+              toCountEl = document.getElementById('done-count');
+            }
+            toCountEl.textContent = parseInt(toCountEl.textContent) + 1;
+          }
+          
+          // Insert the dragged item before the "add issue" button
+          const addIssueBtn = this.querySelector('.add-issue');
+          this.insertBefore(draggedItem, addIssueBtn);
+        }
+      });
+    });
+    // Add new functionality for delete project
+    document.getElementById('delete-project-btn').addEventListener('click', () => {
+      document.getElementById('delete-project-modal').style.display = 'flex';
+    });
+    
+    document.getElementById('cancel-delete-project').addEventListener('click', () => {
+      document.getElementById('delete-project-modal').style.display = 'none';
+    });
+    
+    document.getElementById('confirm-delete-project').addEventListener('click', () => {
+      // Add code to delete the project
+      alert('Project deleted successfully!');
+      document.getElementById('delete-project-modal').style.display = 'none';
+    });
+    
+    // Add new functionality for delete task
+    let currentTaskToDelete = null;
+    
+    document.getElementById('delete-task-btn').addEventListener('click', () => {
+      const taskDetailModal = document.getElementById('task-detail-modal');
+      const taskId = taskDetailModal.querySelector('.task-detail-id').textContent;
+      currentTaskToDelete = taskId;
+      
+      document.getElementById('task-detail-modal').style.display = 'none';
+      document.getElementById('delete-task-modal').style.display = 'flex';
+    });
+    
+    document.getElementById('cancel-delete-task').addEventListener('click', () => {
+      document.getElementById('delete-task-modal').style.display = 'none';
+    });
+    
+    document.getElementById('confirm-delete-task').addEventListener('click', () => {
+      if (currentTaskToDelete) {
+        // Find the task element to remove
+        const taskToRemove = document.querySelector(`[data-task-id="${currentTaskToDelete}"]`);
+        
+        if (taskToRemove) {
+          // Update the count in the column
+          let columnCountId;
+          const parentColumn = taskToRemove.closest('.tasks-container');
+          
+          if (parentColumn.id === 'todo-tasks') {
+            columnCountId = 'todo-count';
+          } else if (parentColumn.id === 'progress-tasks') {
+            columnCountId = 'progress-count';
+          } else {
+            columnCountId = 'done-count';
+          }
+          
+          const countEl = document.getElementById(columnCountId);
+          countEl.textContent = parseInt(countEl.textContent) - 1;
+          
+          // Remove the task from the DOM
+          taskToRemove.remove();
+        }
+        
+        currentTaskToDelete = null;
+        document.getElementById('delete-task-modal').style.display = 'none';
+      }
+    });
+    
+    // Handle person selection in add people modal
+    document.querySelectorAll('.person-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const personItem = checkbox.closest('.person-item');
+        if (checkbox.checked) {
+          personItem.style.backgroundColor = '#E6EFFC';
+        } else {
+          personItem.style.backgroundColor = '';
+        }
+      });
+    });
+    
+    document.getElementById('cancel-add-people').addEventListener('click', () => {
+      document.getElementById('add-people-modal').style.display = 'none';
+    });
+    
+    document.getElementById('confirm-add-people').addEventListener('click', () => {
+      const selectedPeople = [];
+      
+      document.querySelectorAll('.person-checkbox:checked').forEach(checkbox => {
+        const personItem = checkbox.closest('.person-item');
+        const name = personItem.querySelector('.person-name').textContent;
+        const role = personItem.querySelector('.role-dropdown').value;
+        
+        selectedPeople.push({ name, role });
+      });
+      
+      if (selectedPeople.length > 0) {
+        alert(`Added ${selectedPeople.length} people to the project!`);
+        
+        // Reset checkboxes
+        document.querySelectorAll('.person-checkbox').forEach(checkbox => {
+          checkbox.checked = false;
+          checkbox.closest('.person-item').style.backgroundColor = '';
+        });
+      } else {
+        alert('Please select at least one person to add.');
+      }
+      
+      document.getElementById('add-people-modal').style.display = 'none';
+    });
   </script>
 </body>
 </html>
