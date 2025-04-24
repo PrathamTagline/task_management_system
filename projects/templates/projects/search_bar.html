@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Project Links with JWT Authentication</title>
+</head>
+<body>
+
+    <!-- Container for dynamically generated project links -->
+    <div id="projectLinksContainer"></div>
+
+    <script>
+      const projectListContainer = document.querySelector('.project-list');
+        // Function to fetch project data from the API with JWT authentication
+        async function fetchProjects() {
+            const jwtToken = localStorage.getItem('access_token');
+            if (!jwtToken) {
+                console.error('JWT token not found in localStorage');
+                return;
+            }
+
+            try {
+                const response = await fetch('/projects/api/projects/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`HTTP error! status: ${response.status}`, errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                if (data && Array.isArray(data)) {
+                    generateProjectLinks(data);
+                } else {
+                    console.error("Invalid data format", data);
+                }
+            } catch (error) {
+                console.error('Error fetching projects:', error.message);
+                console.error('Error details:', error);
+            }
+        }
+
+        // Function to generate <a> tags dynamically from the JSON data
+        function generateProjectLinks(projects) {
+            
+          projectListContainer.innerHTML = ''; // Clear any existing content
+
+            projects.forEach(project => {
+                const projectName = project.name || 'Unnamed Project'; // Fallback if 'name' is missing
+                const projectKey = project.key || '#'; // Fallback if 'key' is missing
+
+                // Create a new <a> tag for the project
+                const projectLink = document.createElement('a');
+                projectLink.href = `/projects/${projectKey}`;
+                projectLink.textContent = `${projectName}`;
+                projectLink.target = '_blank'; // Open in a new tab
+
+                // Append the link to the container
+                projectListContainer.appendChild(projectLink);
+                projectListContainer.appendChild(document.createElement('br')); // Add a line break between links
+            });
+        }
+
+        // Fetch the project data when the page loads
+        window.onload = fetchProjects;
+    </script>
+
+</body>
+</html>

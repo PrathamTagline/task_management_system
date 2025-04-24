@@ -14,6 +14,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('create/', views.create_project, name='create_project'),
     path('boarding/', views.boarding_view, name='boarding_page'),
+    path('search/', views.search_view, name='search_page'),
+    path('<str:key>/', views.project_detail_view, name='project_page'),
 ]
 
 # Serve media files during development (if DEBUG is True)

@@ -97,6 +97,46 @@ document.addEventListener('DOMContentLoaded', async function () {
     const projectsContainer = document.getElementById('projects-grid'); // The container for projects
     const subNav = document.getElementById('projects-sub-nav'); // The sub navigation for projects
 
+    // Function to load projects into the sidebar
+    async function loadProjectsIntoSidebar() {
+        try {
+            const projects = await fetchProjects(); // Fetch projects from the backend
+
+            // Clear the project list container
+            projectListContainer.innerHTML = '';
+
+            // Loop through the projects and create sidebar items
+            projects.forEach(project => {
+                const projectNavItem = document.createElement('div');
+                projectNavItem.classList.add('nav-item');
+                projectNavItem.dataset.section = `project-${project.key}`;
+                
+                const projectName = project.name || 'Unnamed Project'; // Fallback if 'name' is missing
+                const projectKey = project.key || '#'; // Fallback if 'key' is missing
+
+                projectNavItem.innerHTML = `
+                    <div class="nav-icon">${projectName.charAt(0).toUpperCase()}</div>
+                    <div class="with-chevron">
+                        <a href="/projects/${projectName}">${projectName}</a>
+                    </div>
+                `;
+
+                // Add click event listener to navigate to the project view
+                projectNavItem.addEventListener('click', () => {
+                    console.log(`Navigating to project: ${projectName}`);
+                    toggleView('dashboard-view'); // Navigate to the dashboard view
+                });
+
+                // Append the project item to the sidebar
+                projectListContainer.appendChild(projectNavItem);
+            });
+        } catch (error) {
+            console.error('Error loading projects into sidebar:', error);
+            projectListContainer.innerHTML = '<p>Error loading projects. Please try again later.</p>';
+        }
+    }
+
+    // Function to update projects in the main container
     async function updateProjects() {
         try {
             // Fetch projects data
